@@ -38,6 +38,7 @@ import {
   Check
 } from "lucide-react"
 import { getUsers, setCurrentUser } from "@/services/storage"
+import { allInitialUsers } from "@/data/initialData"
 
 const ROLES = [
   {
@@ -86,19 +87,34 @@ export function LoginForm({
       return
     }
 
-    const users = getUsers()
+    const storedUsers = getUsers()
+    const users = (storedUsers && storedUsers.length > 0) ? storedUsers : allInitialUsers
     const inputClean = username.toLowerCase().trim()
-    const foundUser = users.find(
-      u => (
+    const passwordClean = password.trim()
+
+    const foundUser = users.find(u => {
+      if (u.role !== selectedRole) return false;
+
+      const matchIdentifier = (
         u.username?.toLowerCase() === inputClean ||
+        u.username?.toLowerCase() === `guru.${inputClean}` ||
         u.username?.toLowerCase() === `siswa.${inputClean}` ||
+        u.username?.toLowerCase() === `admin.${inputClean}` ||
         u.name?.toLowerCase() === inputClean ||
         u.nis?.toLowerCase() === inputClean ||
         u.email?.toLowerCase() === inputClean
-      ) && 
-      (u.password === password || (u.role === 'STUDENT' && password === 'user123')) &&
-      u.role === selectedRole
-    )
+      );
+
+      if (!matchIdentifier) return false;
+
+      const matchPassword = (
+        u.password === passwordClean ||
+        (u.role === 'STUDENT' && passwordClean === 'user123') ||
+        ((u.role === 'TEACHER' || u.role === 'ADMIN') && passwordClean === 'password123')
+      );
+
+      return matchPassword;
+    })
 
     if (foundUser) {
       setCurrentUser(foundUser)

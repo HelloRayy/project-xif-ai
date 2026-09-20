@@ -32,14 +32,9 @@ export const SEED_DATA = {
 
 // Initialize Storage helper
 export const initStorage = () => {
-  const currentStudents = localStorage.getItem(STORAGE_KEYS.STUDENTS);
-  if (!currentStudents || JSON.parse(currentStudents).length < 20) {
-    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(initialStudents));
-  }
-  const currentUsers = localStorage.getItem(STORAGE_KEYS.USERS);
-  if (!currentUsers || JSON.parse(currentUsers).length < 20) {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(allInitialUsers));
-  }
+  // Always ensure default users and students are populated
+  getUsers();
+  getStudents();
   if (!localStorage.getItem(STORAGE_KEYS.REQUESTS)) {
     localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(initialRequests));
   }
@@ -86,13 +81,31 @@ export const setCurrentUser = (user) => {
 };
 
 export const getUsers = () => {
-  const data = localStorage.getItem(STORAGE_KEYS.USERS);
-  const users = data ? JSON.parse(data) : [];
-  if (users.length < 20) {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(allInitialUsers));
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.USERS);
+    const existing = data ? JSON.parse(data) : [];
+    
+    const map = new Map();
+    // 1. Initial base users (admin, teachers for XI-A to XI-F, and all 216 students)
+    allInitialUsers.forEach(u => {
+      map.set(u.username.toLowerCase(), u);
+    });
+    // 2. Merge any user data from localStorage
+    existing.forEach(u => {
+      if (u && u.username) {
+        map.set(u.username.toLowerCase(), { ...map.get(u.username.toLowerCase()), ...u });
+      }
+    });
+
+    const merged = Array.from(map.values());
+    if (merged.length !== existing.length) {
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(merged));
+    }
+    return merged;
+  } catch (err) {
+    console.error('Error reading users from storage:', err);
     return allInitialUsers;
   }
-  return users;
 };
 
 export const saveUser = (newUser) => {
@@ -125,12 +138,29 @@ export const saveUser = (newUser) => {
 };
 
 export const getStudents = () => {
-  const data = localStorage.getItem(STORAGE_KEYS.STUDENTS);
-  if (!data || JSON.parse(data).length < 20) {
-    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(initialStudents));
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.STUDENTS);
+    const existing = data ? JSON.parse(data) : [];
+    
+    const map = new Map();
+    initialStudents.forEach(s => {
+      map.set(s.id, s);
+    });
+    existing.forEach(s => {
+      if (s && s.id) {
+        map.set(s.id, { ...map.get(s.id), ...s });
+      }
+    });
+
+    const merged = Array.from(map.values());
+    if (merged.length !== existing.length) {
+      localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(merged));
+    }
+    return merged;
+  } catch (err) {
+    console.error('Error reading students from storage:', err);
     return initialStudents;
   }
-  return JSON.parse(data);
 };
 
 export const saveStudent = (studentData) => {
