@@ -139,38 +139,22 @@ export function LoginForm({
         return
       }
 
-      if (!cleanNisn) {
-        setErrorMsg("Mohon masukkan NISN siswa (10 digit).")
-        return
-      }
-
-      // Match student within the selected class
-      // 1. Search in users database
+      // NISN accepted freely: any entered NISN is considered valid
+      // Authentication matches the student by class and name
+      // 1. Search in users database by class & name
       foundUser = users.find(u => {
         if (u.role !== "STUDENT") return false
         if (u.class !== studentClass) return false
 
         const uName = (u.name || "").toLowerCase().trim()
-        const uNisn = (u.nisn || "").replace(/[^0-9]/g, "")
-        const uNis = (u.nis || "").replace(/[^0-9]/g, "")
-
-        const nameMatches = uName === cleanName || uName.includes(cleanName) || cleanName.includes(uName)
-        const nisnMatches = uNisn === cleanNisn || uNis === cleanNisn
-
-        return nameMatches && nisnMatches
+        return uName === cleanName || uName.includes(cleanName) || cleanName.includes(uName)
       })
 
-      // 2. Fallback: Search in class students list
+      // 2. Fallback: Search in class students list by class & name
       if (!foundUser) {
         const matchStudent = classStudents.find(s => {
           const sName = s.name.toLowerCase().trim()
-          const sNisn = (s.nisn || "").replace(/[^0-9]/g, "")
-          const sNis = (s.nis || "").replace(/[^0-9]/g, "")
-
-          const nameMatches = sName === cleanName || sName.includes(cleanName) || cleanName.includes(sName)
-          const nisnMatches = sNisn === cleanNisn || sNis === cleanNisn
-
-          return nameMatches && nisnMatches
+          return sName === cleanName || sName.includes(cleanName) || cleanName.includes(sName)
         })
 
         if (matchStudent) {
@@ -181,7 +165,7 @@ export function LoginForm({
             role: "STUDENT",
             roleLabel: `Siswa Kelas ${matchStudent.class}`,
             nis: matchStudent.nis,
-            nisn: matchStudent.nisn,
+            nisn: cleanNisn || matchStudent.nisn,
             class: matchStudent.class,
             gender: matchStudent.gender,
             guardianName: matchStudent.guardianName,
@@ -191,6 +175,11 @@ export function LoginForm({
             status: "Aktif"
           }
         }
+      }
+
+      // If student matched, retain the entered NISN if provided
+      if (foundUser && cleanNisn) {
+        foundUser = { ...foundUser, nisn: cleanNisn }
       }
     } else if (selectedRole === "TEACHER") {
       const cleanName = teacherName.toLowerCase().trim()
@@ -233,7 +222,7 @@ export function LoginForm({
       onLoginSuccess(foundUser)
     } else {
       if (selectedRole === "STUDENT") {
-        setErrorMsg("Data siswa tidak ditemukan. Ketik nama untuk melihat saran nama siswa atau periksa kembali NISN.")
+        setErrorMsg(`Nama siswa "${studentName}" tidak terdaftar di ${studentClass}. Periksa kembali penulisan nama atau kelas.`)
       } else {
         setErrorMsg("Identitas Nama atau NIP tidak ditemukan pada sistem.")
       }
