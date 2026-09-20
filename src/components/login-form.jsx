@@ -19,6 +19,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -351,23 +358,25 @@ export function LoginForm({
                   XI-A s/d XI-F
                 </span>
               </div>
-              <select
-                id="student-class-select"
+              <Select
                 value={studentClass}
-                onChange={(e) => {
-                  setStudentClass(e.target.value)
+                onValueChange={(val) => {
+                  setStudentClass(val)
                   setErrorMsg("")
                 }}
-                className="w-full h-10 px-3 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
               >
-                <option value="">-- Pilih Kelas Siswa --</option>
-                <option value="XI-A">Kelas XI-A</option>
-                <option value="XI-B">Kelas XI-B</option>
-                <option value="XI-C">Kelas XI-C</option>
-                <option value="XI-D">Kelas XI-D</option>
-                <option value="XI-E">Kelas XI-E</option>
-                <option value="XI-F">Kelas XI-F</option>
-              </select>
+                <SelectTrigger id="student-class-select" className="w-full h-10 px-3 text-xs bg-background border-border font-medium">
+                  <SelectValue placeholder="-- Pilih Kelas Siswa --" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="XI-A">Kelas XI-A</SelectItem>
+                  <SelectItem value="XI-B">Kelas XI-B</SelectItem>
+                  <SelectItem value="XI-C">Kelas XI-C</SelectItem>
+                  <SelectItem value="XI-D">Kelas XI-D</SelectItem>
+                  <SelectItem value="XI-E">Kelas XI-E</SelectItem>
+                  <SelectItem value="XI-F">Kelas XI-F</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* 2. Input Nama Lengkap Siswa (Manual tanpa suggestion) */}
@@ -449,10 +458,10 @@ export function LoginForm({
               <Label className="text-xs font-semibold text-foreground">
                 Pilih Wali Kelas
               </Label>
-              <select
+              <Select
                 value={teacherName}
-                onChange={(e) => {
-                  const selected = defaultTeachers.find(t => t.name === e.target.value)
+                onValueChange={(val) => {
+                  const selected = defaultTeachers.find(t => t.name === val)
                   if (selected) {
                     handleSelectTeacher(selected)
                   } else {
@@ -461,15 +470,18 @@ export function LoginForm({
                     setTeacherAssignedClass("")
                   }
                 }}
-                className="w-full h-10 px-3 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
               >
-                <option value="">-- Pilih Guru / Wali Kelas (XI-A s/d XI-F) --</option>
-                {defaultTeachers.map((t) => (
-                  <option key={t.id} value={t.name}>
-                    {t.assignedClass} • {t.name} (NIP: {t.nip})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full h-10 px-3 text-xs bg-background border-border font-medium">
+                  <SelectValue placeholder="-- Pilih Guru / Wali Kelas (XI-A s/d XI-F) --" />
+                </SelectTrigger>
+                <SelectContent>
+                  {defaultTeachers.map((t) => (
+                    <SelectItem key={t.id} value={t.name}>
+                      {t.assignedClass} • {t.name} (NIP: {t.nip})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Nama Guru Input */}
@@ -529,10 +541,10 @@ export function LoginForm({
               <Label className="text-xs font-semibold text-foreground">
                 Pilih Akun Petugas
               </Label>
-              <select
+              <Select
                 value={adminName}
-                onChange={(e) => {
-                  const selected = defaultAdmins.find(a => a.name === e.target.value)
+                onValueChange={(val) => {
+                  const selected = defaultAdmins.find(a => a.name === val)
                   if (selected) {
                     handleSelectAdmin(selected)
                   } else {
@@ -540,15 +552,18 @@ export function LoginForm({
                     setAdminNip("")
                   }
                 }}
-                className="w-full h-10 px-3 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
               >
-                <option value="">-- Pilih Petugas BK / TU --</option>
-                {defaultAdmins.map((a) => (
-                  <option key={a.id} value={a.name}>
-                    {a.name} ({a.roleLabel})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full h-10 px-3 text-xs bg-background border-border font-medium">
+                  <SelectValue placeholder="-- Pilih Petugas BK / TU --" />
+                </SelectTrigger>
+                <SelectContent>
+                  {defaultAdmins.map((a) => (
+                    <SelectItem key={a.id} value={a.name}>
+                      {a.name} ({a.roleLabel})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Nama Petugas Input */}
