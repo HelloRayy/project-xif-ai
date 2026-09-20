@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   DOCUMENTS: 'schooladmin_documents',
   NOTIFICATIONS: 'schooladmin_notifications',
   TEMPLATES: 'schooladmin_templates',
+  PORTAL_LOCK: 'schooladmin_portal_lock_mode', // 'AUTO' | 'FORCE_UNLOCK' | 'FORCE_LOCKED'
 };
 
 import {
@@ -351,4 +352,32 @@ export const markNotificationsRead = (userId) => {
   let allNotifs = data ? JSON.parse(data) : [];
   allNotifs = allNotifs.map(n => n.userId === userId ? { ...n, isRead: true } : n);
   localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(allNotifs));
+};
+
+/**
+ * Portal Access Lock Helper for Students:
+ * Operates between 07:30 and 15:30 WIB by default.
+ * Mode: 'AUTO' (follows 07:30 - 15:30 schedule) | 'FORCE_UNLOCK' (emergency BK override) | 'FORCE_LOCKED'
+ */
+export const getPortalLockMode = () => {
+  return localStorage.getItem(STORAGE_KEYS.PORTAL_LOCK) || 'AUTO';
+};
+
+export const setPortalLockMode = (mode) => {
+  localStorage.setItem(STORAGE_KEYS.PORTAL_LOCK, mode);
+  window.dispatchEvent(new Event('portal_lock_changed'));
+};
+
+export const isPortalLockedNow = () => {
+  const mode = getPortalLockMode();
+  if (mode === 'FORCE_UNLOCK') return false;
+  if (mode === 'FORCE_LOCKED') return true;
+
+  // AUTO Mode: Check current system time
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const lockStartMinutes = 7 * 60 + 30;  // 07:30
+  const lockEndMinutes = 15 * 60 + 30;   // 15:30
+
+  return currentMinutes >= lockStartMinutes && currentMinutes < lockEndMinutes;
 };

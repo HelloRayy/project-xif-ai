@@ -91,26 +91,26 @@ export function AppSidebar({
         },
       ]
     }
-    // ADMIN (Tata Usaha)
+    // ADMIN (Guru BK - Bimbingan & Konseling)
     return [
       {
         id: 'OVERVIEW',
-        title: 'Monitoring & Pengesahan',
+        title: 'Monitoring Perizinan Siswa',
         icon: LayoutDashboard,
       },
       {
         id: 'STUDENTS',
-        title: 'Master Data Siswa',
+        title: 'Data Siswa Binaan',
         icon: Users,
       },
       {
         id: 'ARCHIVE',
-        title: 'Arsip & Dokumen Resmi',
+        title: 'Arsip Dokumen Perizinan',
         icon: FolderArchive,
       },
       {
         id: 'REPORTS',
-        title: 'Laporan & Statistik',
+        title: 'Rekap & Statistik Absensi',
         icon: BarChart3,
       },
     ]

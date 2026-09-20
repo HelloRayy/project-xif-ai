@@ -23,7 +23,8 @@ import {
   Clock,
   ChevronRight,
   Maximize2,
-  Printer
+  Printer,
+  Calendar
 } from 'lucide-react';
 import PrintAttendanceModal from '../components/PrintAttendanceModal';
 import { Button } from '../components/ui/button';
@@ -64,6 +65,8 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
   // Class Students & Attendance Recap States
   const [studentSearch, setStudentSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [dateFilter, setDateFilter] = useState('ALL'); // 'ALL' | 'TODAY' | 'LAST_7_DAYS' | 'THIS_MONTH' | 'CUSTOM'
+  const [customDate, setCustomDate] = useState('');
   const [selectedStudentDetail, setSelectedStudentDetail] = useState(null);
 
   // Image Lightbox Preview Modal State
@@ -158,7 +161,41 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
     );
   };
 
-  const pendingQueue = requests.filter(r => r.status === 'MENUNGGU_VERIFIKASI');
+  // Date Filtering Helper
+  const isDateMatchingFilter = (dateStr) => {
+    if (dateFilter === 'ALL' || !dateStr) return true;
+    
+    // Normalize dateStr (can be '2026-08-23' or '2026-08-23 10:30')
+    const cleanDate = dateStr.slice(0, 10);
+    const targetDate = new Date(cleanDate);
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+
+    if (dateFilter === 'TODAY') {
+      return cleanDate === todayStr;
+    }
+    if (dateFilter === 'LAST_7_DAYS') {
+      const diffTime = Math.abs(now - targetDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= 7;
+    }
+    if (dateFilter === 'THIS_MONTH') {
+      const targetMonth = targetDate.toISOString().slice(0, 7);
+      const currentMonth = now.toISOString().slice(0, 7);
+      return targetMonth === currentMonth;
+    }
+    if (dateFilter === 'CUSTOM') {
+      if (!customDate) return true;
+      return cleanDate === customDate;
+    }
+    return true;
+  };
+
+  const filteredRequestsByDate = requests.filter(r => {
+    return isDateMatchingFilter(r.startDate || r.createdAt);
+  });
+
+  const pendingQueue = filteredRequestsByDate.filter(r => r.status === 'MENUNGGU_VERIFIKASI');
 
   // Compute Per-Student Attendance Statistics (S/I/D/A without NIS/NISN)
   const studentAttendanceData = students.map((s) => {
@@ -302,12 +339,42 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
             </div>
           </div>
 
-          {/* Pending Queue List */}
+          {/* Filter Tanggal & Pending Queue List */}
           <div className="space-y-3">
-            <h2 className="text-base font-semibold text-slate-900 dark:text-zinc-50 flex items-center gap-2">
-              <CheckSquare className="w-4 h-4 text-blue-600" />
-              Antrean Pengajuan Menunggu Verifikasi ({pendingQueue.length})
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-card p-3 rounded-xl border border-border shadow-2xs">
+              <h2 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-zinc-50 flex items-center gap-2">
+                <CheckSquare className="w-4 h-4 text-blue-600" />
+                <span>Antrean Pengajuan Menunggu Verifikasi ({pendingQueue.length})</span>
+              </h2>
+
+              {/* Date Filter Dropdown */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden sm:inline">Filter Tanggal:</span>
+                </div>
+                <select
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                  className="h-8 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                >
+                  <option value="ALL">Semua Tanggal</option>
+                  <option value="TODAY">Hari Ini</option>
+                  <option value="LAST_7_DAYS">7 Hari Terakhir</option>
+                  <option value="THIS_MONTH">Bulan Ini</option>
+                  <option value="CUSTOM">Pilih Tanggal Tertentu...</option>
+                </select>
+
+                {dateFilter === 'CUSTOM' && (
+                  <input
+                    type="date"
+                    value={customDate}
+                    onChange={(e) => setCustomDate(e.target.value)}
+                    className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                )}
+              </div>
+            </div>
 
             {pendingQueue.length === 0 ? (
               <div className="text-center py-12 border border-dashed border-border rounded-xl">
@@ -383,13 +450,43 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
           ========================================================================= */}
       {activeTab === 'VERIFY' && (
         <div className="space-y-4">
-          <div className="border-b border-border pb-4">
-            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">
-              Verifikasi Pengajuan Izin & Dispensasi
-            </h1>
-            <p className="text-sm font-normal text-slate-600 dark:text-zinc-400 mt-1">
-              Daftar pengajuan izin sakit dan dispensasi dari siswa kelas {teacherClass}.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">
+                Verifikasi Pengajuan Izin & Dispensasi
+              </h1>
+              <p className="text-sm font-normal text-slate-600 dark:text-zinc-400 mt-1">
+                Daftar pengajuan izin sakit dan dispensasi dari siswa kelas {teacherClass}.
+              </p>
+            </div>
+
+            {/* Date Filter Dropdown */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                <span className="hidden sm:inline">Filter Tanggal:</span>
+              </div>
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="h-8 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+              >
+                <option value="ALL">Semua Tanggal</option>
+                <option value="TODAY">Hari Ini</option>
+                <option value="LAST_7_DAYS">7 Hari Terakhir</option>
+                <option value="THIS_MONTH">Bulan Ini</option>
+                <option value="CUSTOM">Pilih Tanggal Tertentu...</option>
+              </select>
+
+              {dateFilter === 'CUSTOM' && (
+                <input
+                  type="date"
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              )}
+            </div>
           </div>
 
           {pendingQueue.length === 0 ? (

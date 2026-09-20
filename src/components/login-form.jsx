@@ -65,8 +65,8 @@ const ROLES = [
   },
   {
     value: "ADMIN",
-    label: "Guru BK / Staf TU",
-    subLabel: "Nama Petugas & NIP",
+    label: "Guru BK (Bimbingan & Konseling)",
+    subLabel: "Nama Guru BK & NIP",
     icon: Building2,
   },
 ]
@@ -574,7 +574,7 @@ export function LoginForm({
         )}
 
         {/* ====================================================================
-            ROLE: GURU BK / STAF TU
+            ROLE: GURU BK (BIMBINGAN & KONSELING)
             ==================================================================== */}
         {selectedRole === "ADMIN" && (
           <div className="flex flex-col gap-3.5 bg-card p-3.5 rounded-xl border border-border shadow-xs">
@@ -582,7 +582,7 @@ export function LoginForm({
             {/* Quick Selector Petugas */}
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs font-semibold text-foreground">
-                Pilih Akun Petugas
+                Pilih Akun Guru BK
               </Label>
               <Select
                 value={adminName}
@@ -597,7 +597,7 @@ export function LoginForm({
                 }}
               >
                 <SelectTrigger className="w-full h-10 px-3 text-xs bg-background border-border font-medium">
-                  <SelectValue placeholder="-- Pilih Petugas BK / TU --" />
+                  <SelectValue placeholder="-- Pilih Petugas / Guru BK --" />
                 </SelectTrigger>
                 <SelectContent>
                   {defaultAdmins.map((a) => (
@@ -612,14 +612,14 @@ export function LoginForm({
             {/* Nama Petugas Input */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="admin-name-input" className="text-xs font-semibold text-foreground">
-                Nama Petugas BK / TU
+                Nama Lengkap Guru BK
               </Label>
               <div className="relative flex items-center">
                 <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
                   id="admin-name-input"
                   type="text"
-                  placeholder="Nama Lengkap Petugas"
+                  placeholder="Nama Lengkap Guru BK"
                   value={adminName}
                   onChange={(e) => setAdminName(e.target.value)}
                   className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
@@ -637,7 +637,7 @@ export function LoginForm({
                 <Input
                   id="admin-nip-input"
                   type="text"
-                  placeholder="NIP Petugas BK / TU"
+                  placeholder="NIP Guru BK"
                   value={adminNip}
                   onChange={(e) => setAdminNip(e.target.value)}
                   className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"

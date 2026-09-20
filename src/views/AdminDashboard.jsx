@@ -27,7 +27,10 @@ import {
   ShieldCheck,
   Send,
   X,
-  FileCheck
+  FileCheck,
+  Lock,
+  Unlock,
+  ShieldAlert
 } from 'lucide-react';
 import PrintAttendanceModal from '../components/PrintAttendanceModal';
 import { Button } from '../components/ui/button';
@@ -55,7 +58,10 @@ import {
   saveStudent, 
   deleteStudent, 
   getDocuments, 
-  saveDocument 
+  saveDocument,
+  getPortalLockMode,
+  setPortalLockMode,
+  isPortalLockedNow
 } from '../services/storage';
 import * as XLSX from 'xlsx';
 
@@ -78,6 +84,27 @@ export default function AdminDashboard({ currentUser, activeTab }) {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [classFilter, setClassFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState('ALL'); // 'ALL' | 'TODAY' | 'LAST_7_DAYS' | 'THIS_MONTH' | 'CUSTOM'
+  const [customDate, setCustomDate] = useState('');
+
+  // Portal Lock Mode for Student Access Control
+  const [portalLockMode, setPortalLockModeState] = useState(getPortalLockMode());
+  const [isCurrentlyLocked, setIsCurrentlyLocked] = useState(isPortalLockedNow());
+
+  const handleToggleLockMode = (newMode) => {
+    setPortalLockMode(newMode);
+    setPortalLockModeState(newMode);
+    setIsCurrentlyLocked(isPortalLockedNow());
+    showAlert(
+      'Status Akses Siswa Diperbarui',
+      newMode === 'FORCE_UNLOCK' 
+        ? 'Portal siswa berhasil dibuka paksa (Override Darurat). Siswa dapat mengajukan izin saat ini.' 
+        : newMode === 'FORCE_LOCKED'
+        ? 'Portal siswa berhasil dikunci secara manual.'
+        : 'Mode operasional portal siswa dikembalikan ke Jadwal Otomatis (07.30 - 15.30 WIB tertutup).',
+      'Mengerti'
+    );
+  };
 
   // Student Database Filter States
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
@@ -343,16 +370,46 @@ export default function AdminDashboard({ currentUser, activeTab }) {
     XLSX.writeFile(wb, `Rekap_Administrasi_TU_SMAN6_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
+  // Date Filtering Helper
+  const isDateMatchingFilter = (dateStr) => {
+    if (dateFilter === 'ALL' || !dateStr) return true;
+    
+    const cleanDate = dateStr.slice(0, 10);
+    const targetDate = new Date(cleanDate);
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+
+    if (dateFilter === 'TODAY') {
+      return cleanDate === todayStr;
+    }
+    if (dateFilter === 'LAST_7_DAYS') {
+      const diffTime = Math.abs(now - targetDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= 7;
+    }
+    if (dateFilter === 'THIS_MONTH') {
+      const targetMonth = targetDate.toISOString().slice(0, 7);
+      const currentMonth = now.toISOString().slice(0, 7);
+      return targetMonth === currentMonth;
+    }
+    if (dateFilter === 'CUSTOM') {
+      if (!customDate) return true;
+      return cleanDate === customDate;
+    }
+    return true;
+  };
+
   const filteredRequests = requests.filter(r => {
     const matchStatus = statusFilter === 'ALL' || r.status === statusFilter;
     const matchClass = classFilter === 'ALL' || r.studentClass === classFilter;
     const matchSearch = r.studentName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         r.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         r.subType?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchStatus && matchClass && matchSearch;
+    const matchDate = isDateMatchingFilter(r.startDate || r.createdAt);
+    return matchStatus && matchClass && matchSearch && matchDate;
   });
 
-  const pendingTUCount = requests.filter(r => r.status === 'DIPROSES_TU').length;
+  const totalIzinMasuk = requests.length;
   const waitingTeacherCount = requests.filter(r => r.status === 'MENUNGGU_VERIFIKASI').length;
   const approvedTotal = requests.filter(r => r.status === 'DISETUJUI').length;
   const rejectedTotal = requests.filter(r => r.status === 'DITOLAK').length;
@@ -360,27 +417,55 @@ export default function AdminDashboard({ currentUser, activeTab }) {
   return (
     <div className="space-y-6">
       
-      {/* 1. Header Minimalis & Modern */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
+      {/* 1. Header Minimalis & Kontrol Emergency Lock Siswa */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-zinc-50">
-              Tata Usaha & Kontrol Administrasi
+              Bimbingan & Konseling (BK) — Monitoring Perizinan Terpadu
             </h1>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
-              Staf TU
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+              Guru BK
             </span>
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Pusat penerbitan surat dinas, cap stempel resmi, audit perizinan, dan database siswa.
+            Pusat pemantauan izin siswa lintas kelas (XI-A s/d XI-F), rekap absensi, dan kontrol akses portal siswa.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Emergency Lock Control Widget & Export Button */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Emergency Lock Toggle */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-card shadow-2xs">
+            <div className="flex items-center gap-1.5 text-xs">
+              {isCurrentlyLocked ? (
+                <Lock className="w-4 h-4 text-amber-600 dark:text-amber-500" />
+              ) : (
+                <Unlock className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
+              )}
+              <div className="flex flex-col">
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold">Akses Portal Siswa</span>
+                <span className={cn("text-xs font-bold", isCurrentlyLocked ? "text-amber-600" : "text-emerald-600")}>
+                  {isCurrentlyLocked ? "Terkunci (07.30-15.30)" : "Terbuka"}
+                </span>
+              </div>
+            </div>
+
+            <select
+              value={portalLockMode}
+              onChange={(e) => handleToggleLockMode(e.target.value)}
+              className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+            >
+              <option value="AUTO">Otomatis (Jadwal Sekolah)</option>
+              <option value="FORCE_UNLOCK">Buka Paksa (Override Darurat / OSIS)</option>
+              <option value="FORCE_LOCKED">Kunci Paksa</option>
+            </select>
+          </div>
+
           <Button
             variant="outline"
             onClick={handleExportExcel}
-            className="h-9 px-3.5 text-xs font-medium rounded-lg border-border hover:bg-muted gap-2 shadow-2xs"
+            className="h-9 px-3.5 text-xs font-medium rounded-xl border-border hover:bg-muted gap-2 shadow-2xs"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             <span>Ekspor Rekap (.xlsx)</span>
@@ -392,46 +477,46 @@ export default function AdminDashboard({ currentUser, activeTab }) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <Card className="p-4 rounded-xl border-border bg-card shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Butuh Tindakan TU</span>
+            <span className="text-xs font-medium text-muted-foreground">Total Laporan Masuk</span>
             <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center">
-              <Clock className="w-4 h-4" />
+              <FileText className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-slate-900 dark:text-zinc-50 mt-1.5">{pendingTUCount}</p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Disetujui Wali Kelas ➔ Siap Cap TU</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-zinc-50 mt-1.5">{totalIzinMasuk}</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Laporan izin siswa kelas XI-A s/d XI-F</p>
         </Card>
 
         <Card className="p-4 rounded-xl border-border bg-card shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Menunggu Wali Kelas</span>
+            <span className="text-xs font-medium text-muted-foreground">Menunggu Verifikasi Wali</span>
             <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
           </div>
           <p className="text-2xl font-bold text-slate-900 dark:text-zinc-50 mt-1.5">{waitingTeacherCount}</p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Antrean verifikasi guru pembina</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Antrean verifikasi oleh Wali Kelas</p>
         </Card>
 
         <Card className="p-4 rounded-xl border-border bg-card shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Surat Resmi Diterbitkan</span>
+            <span className="text-xs font-medium text-muted-foreground">Izin Terverifikasi</span>
             <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center">
-              <FileCheck className="w-4 h-4" />
+              <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <p className="text-2xl font-bold text-slate-900 dark:text-zinc-50 mt-1.5">{approvedTotal}</p>
-          <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">Disahkan & terarsip digital</p>
+          <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">Telah disetujui Wali Kelas</p>
         </Card>
 
         <Card className="p-4 rounded-xl border-border bg-card shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Total Siswa Terdaftar</span>
+            <span className="text-xs font-medium text-muted-foreground">Total Siswa Binaan</span>
             <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 flex items-center justify-center">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <p className="text-2xl font-bold text-slate-900 dark:text-zinc-50 mt-1.5">{students.length}</p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">Tersebar di seluruh tingkatan kelas</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Siswa terdaftar kelas XI-A s/d XI-F</p>
         </Card>
       </div>
 
@@ -446,17 +531,17 @@ export default function AdminDashboard({ currentUser, activeTab }) {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <h3 className="text-sm sm:text-base font-semibold text-slate-900 dark:text-zinc-50 flex items-center gap-2">
-                  <LayoutDashboard className="w-4 h-4 text-blue-600" />
-                  <span>Monitoring & Pengesahan Surat Perizinan</span>
+                  <LayoutDashboard className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span>Monitoring Laporan Perizinan Siswa Terpadu</span>
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Daftar seluruh berkas permohonan masuk yang memerlukan nomor registrasi dan cap stempel resmi TU.
+                  Daftar seluruh laporan izin, dispensasi, dan ketidakhadiran siswa dari kelas XI-A s/d XI-F.
                 </p>
               </div>
 
-              {/* Search & Class Filter */}
+              {/* Search, Date Filter & Class Filter */}
               <div className="flex flex-wrap items-center gap-2.5">
-                <div className="relative flex-1 sm:w-64">
+                <div className="relative flex-1 sm:w-56">
                   <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                   <Input
                     type="text"
@@ -467,10 +552,34 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   />
                 </div>
 
+                {/* Date Filter Dropdown */}
+                <div className="flex items-center gap-1">
+                  <select
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    className="h-9 px-2.5 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                  >
+                    <option value="ALL">Semua Tanggal</option>
+                    <option value="TODAY">Hari Ini</option>
+                    <option value="LAST_7_DAYS">7 Hari Terakhir</option>
+                    <option value="THIS_MONTH">Bulan Ini</option>
+                    <option value="CUSTOM">Pilih Tanggal...</option>
+                  </select>
+
+                  {dateFilter === 'CUSTOM' && (
+                    <input
+                      type="date"
+                      value={customDate}
+                      onChange={(e) => setCustomDate(e.target.value)}
+                      className="h-9 px-2 text-xs bg-background border border-border rounded-xl font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                  )}
+                </div>
+
                 <select
                   value={classFilter}
                   onChange={(e) => setClassFilter(e.target.value)}
-                  className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                 >
                   <option value="ALL">Semua Kelas</option>
                   <option value="XI-A">Kelas XI-A</option>
@@ -566,14 +675,14 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                     <TableHead className="min-w-[190px] py-3 px-4 text-xs font-semibold whitespace-nowrap">Jenis Layanan</TableHead>
                     <TableHead className="min-w-[240px] py-3 px-4 text-xs font-semibold">Keperluan & Waktu</TableHead>
                     <TableHead className="w-36 py-3 px-4 text-xs font-semibold whitespace-nowrap">Status</TableHead>
-                    <TableHead className="w-36 py-3 px-4 text-right text-xs font-semibold whitespace-nowrap pr-5">Aksi TU</TableHead>
+                    <TableHead className="w-32 py-3 px-4 text-right text-xs font-semibold whitespace-nowrap pr-5">Aksi BK</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-border/60">
                   {filteredRequests.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-12 text-xs text-muted-foreground">
-                        <FileText className="w-8 h-8 mx-auto mb-2 opacity-40 text-blue-600" />
+                        <FileText className="w-8 h-8 mx-auto mb-2 opacity-40 text-purple-600" />
                         <p className="font-semibold text-slate-700 dark:text-zinc-300">Tidak ada data permohonan yang sesuai filter</p>
                         <p className="text-[11px] text-slate-500 mt-0.5">Silakan pilih status lain atau bersihkan kotak pencarian.</p>
                       </TableCell>
@@ -589,7 +698,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                         {/* Siswa & Wali */}
                         <TableCell className="py-3.5 px-4 min-w-[200px]">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 font-semibold text-xs flex items-center justify-center shrink-0 border border-blue-200/60 dark:border-blue-900/60">
+                            <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-semibold text-xs flex items-center justify-center shrink-0 border border-purple-200/60 dark:border-purple-900/60">
                               {r.studentName.slice(0, 2).toUpperCase()}
                             </div>
                             <div className="min-w-0">
@@ -612,7 +721,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
 
                         {/* Jenis Layanan */}
                         <TableCell className="py-3.5 px-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/60 shadow-2xs">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200/60 dark:border-purple-900/60 shadow-2xs">
                             {r.subType}
                           </span>
                         </TableCell>
@@ -638,7 +747,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                           {r.status === 'DIPROSES_TU' && (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-600 text-white shadow-2xs">
                               <Clock className="w-3 h-3" />
-                              <span>Diproses TU</span>
+                              <span>Diproses</span>
                             </span>
                           )}
                           {r.status === 'MENUNGGU_VERIFIKASI' && (
@@ -653,30 +762,18 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                           )}
                         </TableCell>
 
-                        {/* Aksi TU */}
+                        {/* Aksi BK: Murni Detail Laporan */}
                         <TableCell className="py-3.5 px-4 text-right whitespace-nowrap pr-5">
                           <Button
-                            variant={r.status === 'DIPROSES_TU' ? 'default' : 'outline'}
+                            variant="outline"
                             size="sm"
                             onClick={() => handleOpenTUModal(r)}
-                            className={cn(
-                              "h-8 px-3 text-xs font-medium rounded-lg transition-all",
-                              r.status === 'DIPROSES_TU' 
-                                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-xs" 
-                                : "text-slate-700 dark:text-zinc-300 border-border hover:bg-muted"
-                            )}
+                            className="h-8 px-3 text-xs font-medium rounded-lg text-slate-700 dark:text-zinc-300 border-border hover:bg-muted transition-all"
                           >
-                            {r.status === 'DIPROSES_TU' ? (
-                              <span className="flex items-center gap-1.5 font-semibold">
-                                <ShieldCheck className="w-3.5 h-3.5" />
-                                <span>Sahkan Surat</span>
-                              </span>
-                            ) : (
-                              <span className="flex items-center gap-1.5">
-                                <Eye className="w-3.5 h-3.5 text-blue-600" />
-                                <span>Detail Berkas</span>
-                              </span>
-                            )}
+                            <span className="flex items-center gap-1.5">
+                              <Eye className="w-3.5 h-3.5 text-purple-600" />
+                              <span>Detail Laporan</span>
+                            </span>
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -742,15 +839,12 @@ export default function AdminDashboard({ currentUser, activeTab }) {
 
                     <div className="pt-1">
                       <Button
-                        variant={r.status === 'DIPROSES_TU' ? 'default' : 'outline'}
+                        variant="outline"
                         size="sm"
                         onClick={() => handleOpenTUModal(r)}
-                        className={cn(
-                          "w-full h-8 text-xs font-medium rounded-lg",
-                          r.status === 'DIPROSES_TU' ? "bg-blue-600 hover:bg-blue-700 text-white" : "border-border"
-                        )}
+                        className="w-full h-8 text-xs font-medium rounded-lg border-border"
                       >
-                        {r.status === 'DIPROSES_TU' ? 'Sahkan Surat Resmi TU' : 'Buka Detail & Berkas'}
+                        Buka Detail Laporan
                       </Button>
                     </div>
                   </div>
@@ -1117,21 +1211,21 @@ export default function AdminDashboard({ currentUser, activeTab }) {
       )}
 
       {/* =========================================================================
-          DRAWER: Side-Sheet Pengesahan & Penerbitan Surat TU (Panel Kanan Layar)
+          DRAWER: Side-Sheet Detail Laporan Siswa untuk Guru BK (Panel Kanan Layar)
           ========================================================================= */}
       <Sheet open={!!selectedReqForTU} onOpenChange={(open) => !open && setSelectedReqForTU(null)}>
         <SheetContent side="right" className="sm:max-w-xl w-full p-0 flex flex-col h-full bg-background border-l border-border z-50">
           <SheetHeader className="p-5 border-b border-border text-left shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 flex items-center justify-center border border-blue-200 dark:border-blue-900 shrink-0">
-                <ShieldCheck className="w-4.5 h-4.5" />
+              <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 flex items-center justify-center border border-purple-200 dark:border-purple-900 shrink-0">
+                <FileText className="w-4.5 h-4.5" />
               </div>
               <div>
                 <SheetTitle className="text-base font-semibold text-slate-900 dark:text-zinc-50">
-                  Pengesahan & Penerbitan Surat TU
+                  Detail Laporan Izin Siswa
                 </SheetTitle>
                 <SheetDescription className="text-xs text-muted-foreground mt-0.5">
-                  Verifikasi berkas, register nomor surat dinas, dan bubuhkan cap stempel resmi sekolah.
+                  Informasi lengkap permohonan izin siswa, kontak wali, dan dokumen bukti untuk pemantauan BK.
                 </SheetDescription>
               </div>
             </div>
@@ -1143,7 +1237,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
               {/* Request Summary Card */}
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-900/60 border border-border space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">{selectedReqForTU.id}</span>
+                  <span className="font-mono text-xs font-semibold text-purple-600 dark:text-purple-400">{selectedReqForTU.id}</span>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
                     {selectedReqForTU.subType}
                   </span>
@@ -1164,7 +1258,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 </div>
                 {selectedReqForTU.teacherNote && (
                   <div className="p-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg border border-emerald-200 dark:border-emerald-900/50 text-[11px] text-emerald-800 dark:text-emerald-300">
-                    <strong>Catatan Persetujuan Wali Kelas:</strong> "{selectedReqForTU.teacherNote}"
+                    <strong>Catatan Wali Kelas:</strong> "{selectedReqForTU.teacherNote}"
                   </div>
                 )}
               </div>
@@ -1174,8 +1268,8 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 flex items-center gap-1.5">
-                      <Paperclip className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Lampiran Berkas Pendukung ({selectedReqForTU.attachments.length})</span>
+                      <Paperclip className="w-3.5 h-3.5 text-purple-600" />
+                      <span>Lampiran Bukti / Surat Dokter ({selectedReqForTU.attachments.length})</span>
                     </span>
                   </div>
 
@@ -1185,12 +1279,12 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                       return (
                         <div key={i} className="p-2.5 rounded-xl border border-border bg-card flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center shrink-0">
                               {isImg ? <ImageIcon className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
                             </div>
                             <div className="min-w-0">
                               <p className="font-medium text-xs text-slate-900 dark:text-zinc-100 truncate">{att.name}</p>
-                              <span className="text-[10px] text-muted-foreground">{att.size || 'Lampiran Terverifikasi'}</span>
+                              <span className="text-[10px] text-muted-foreground">{att.size || 'Bukti Izin'}</span>
                             </div>
                           </div>
                           {isImg && att.previewUrl && (
@@ -1201,7 +1295,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                               onClick={() => setPreviewImageModal({ url: att.previewUrl, name: att.name, size: att.size })}
                               className="h-7 px-2.5 text-xs font-medium rounded-lg gap-1 border-border"
                             >
-                              <Eye className="w-3.5 h-3.5 text-blue-600" />
+                              <Eye className="w-3.5 h-3.5 text-purple-600" />
                               <span>Lihat Bukti</span>
                             </Button>
                           )}
@@ -1212,120 +1306,43 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 </div>
               )}
 
-              {/* Official Letter Number Input / Display */}
-              <div className="space-y-1.5 pt-1">
-                <label className="text-xs font-semibold text-slate-900 dark:text-zinc-100 block">
-                  Nomor Registrasi Surat Resmi Sekolah
-                </label>
+              {/* Status Laporan */}
+              <div className="p-3.5 rounded-xl bg-card border border-border space-y-2">
+                <span className="font-semibold text-slate-900 dark:text-zinc-100 block">Status Verifikasi Wali Kelas</span>
                 <div className="flex items-center gap-2">
-                  <Input
-                    type="text"
-                    value={generatedLetterNo}
-                    onChange={(e) => setGeneratedLetterNo(e.target.value)}
-                    placeholder="Contoh: 421.3/SMAN6-TU/VIII/2026/048"
-                    className="h-9 font-mono text-xs bg-background border-border rounded-lg"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowCertificatePreview(!showCertificatePreview)}
-                    className="h-9 px-3 text-xs font-medium rounded-lg border-border whitespace-nowrap gap-1.5 shadow-2xs"
-                  >
-                    <Eye className="w-3.5 h-3.5 text-blue-600" />
-                    <span>{showCertificatePreview ? 'Sembunyikan' : 'Preview Kop Surat'}</span>
-                  </Button>
+                  {selectedReqForTU.status === 'DISETUJUI' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-600 text-white shadow-2xs">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Telah Diverifikasi & Disetujui</span>
+                    </span>
+                  )}
+                  {selectedReqForTU.status === 'MENUNGGU_VERIFIKASI' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-600 text-white shadow-2xs">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Menunggu Tindak Lanjut Wali Kelas</span>
+                    </span>
+                  )}
+                  {selectedReqForTU.status === 'DITOLAK' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-rose-600 text-white shadow-2xs">
+                      <XCircle className="w-3.5 h-3.5" />
+                      <span>Ditolak oleh Wali Kelas</span>
+                    </span>
+                  )}
                 </div>
-              </div>
-
-              {/* Live Official Certificate Preview Box */}
-              {showCertificatePreview && (
-                <div className="p-4 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white text-slate-900 shadow-sm space-y-3 font-sans">
-                  {/* School Letterhead */}
-                  <div className="text-center border-b-2 border-slate-900 pb-2">
-                    <p className="text-[10px] uppercase font-bold tracking-wider text-slate-600">Pemerintah Provinsi Jawa Tengah • Dinas Pendidikan</p>
-                    <h3 className="text-sm font-bold text-slate-950 uppercase tracking-tight">SMA NEGERI 6 SEMARANG</h3>
-                    <p className="text-[9px] text-slate-600">Jl. Ronggolawe No. 4, Semarang Barat • Telp. (024) 7605928 • Web: sman6semarang.sch.id</p>
-                  </div>
-
-                  {/* Letter Title */}
-                  <div className="text-center space-y-0.5 pt-1">
-                    <h4 className="text-xs font-bold uppercase underline tracking-wide text-slate-950">{selectedReqForTU.subType}</h4>
-                    <p className="text-[10px] font-mono text-slate-700">Nomor: {generatedLetterNo}</p>
-                  </div>
-
-                  {/* Body text */}
-                  <div className="text-[11px] leading-relaxed space-y-2 text-slate-800">
-                    <p>Yang bertanda tangan di bawah ini Kepala Tata Usaha SMA Negeri 6 Semarang menerangkan bahwa:</p>
-                    <div className="pl-3 space-y-0.5 text-[11px]">
-                      <p><strong>Nama Lengkap</strong> : {selectedReqForTU.studentName}</p>
-                      <p><strong>Kelas</strong> : {selectedReqForTU.studentClass}</p>
-                      <p><strong>Keperluan</strong> : {selectedReqForTU.purpose}</p>
-                    </div>
-                    <p>Demikian surat keterangan ini diterbitkan secara sah dan resmi untuk dipergunakan sebagaimana mestinya.</p>
-                  </div>
-
-                  {/* Signature & Digital Stamp */}
-                  <div className="pt-3 flex justify-end">
-                    <div className="text-center relative pr-4">
-                      <p className="text-[10px] text-slate-600">Semarang, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                      <p className="text-[10px] font-semibold mt-0.5">Kepala Bagian Tata Usaha</p>
-                      
-                      {/* Stamp simulation */}
-                      <div className="relative py-4 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full border-2 border-dashed border-blue-600/70 text-blue-700 flex flex-col items-center justify-center text-[7px] font-bold rotate-[-12deg] shadow-xs">
-                          <span>★ SMAN 6 ★</span>
-                          <span>TATA USAHA</span>
-                          <span>SEMARANG</span>
-                        </div>
-                      </div>
-
-                      <p className="text-[11px] font-bold underline text-slate-950">{currentUser.name}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Optional Approval Note */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-900 dark:text-zinc-100 block">
-                  Catatan Tambahan Pengesahan (Opsional)
-                </label>
-                <Textarea
-                  value={tuActionNote}
-                  onChange={(e) => setTuActionNote(e.target.value)}
-                  placeholder="Tuliskan catatan khusus atau instruksi penerbitan surat resmi jika ada..."
-                  rows={4}
-                  className="min-h-[130px] text-xs rounded-xl bg-background border-border"
-                />
               </div>
 
             </div>
           )}
 
-          {/* Drawer Sticky Footer Actions */}
+          {/* Drawer Sticky Footer: Pure Close Button for BK Monitoring */}
           {selectedReqForTU && (
             <div className="p-4 border-t border-border bg-card flex items-center justify-end gap-2 shrink-0">
               <Button
                 variant="outline"
                 onClick={() => setSelectedReqForTU(null)}
-                className="h-9 px-3.5 text-xs font-medium rounded-lg border-border"
+                className="h-9 px-4 text-xs font-medium rounded-lg border-border"
               >
-                Batal
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleOpenRejectModal}
-                className="h-9 px-3.5 text-xs font-medium rounded-lg bg-rose-600 hover:bg-rose-700 text-white"
-              >
-                Tolak Berkas
-              </Button>
-              <Button
-                variant="default"
-                onClick={handleTUApprove}
-                className="h-9 px-4 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-xs gap-1.5"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Sahkan & Terbitkan Surat</span>
+                Tutup Pratinjau
               </Button>
             </div>
           )}

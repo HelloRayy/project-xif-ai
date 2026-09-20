@@ -4,13 +4,15 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { SiteHeader } from '@/components/site-header';
 import LoginView from './views/LoginView';
 import StudentDashboard from './views/StudentDashboard';
+import StudentLockedView from './views/StudentLockedView';
 import TeacherDashboard from './views/TeacherDashboard';
 import AdminDashboard from './views/AdminDashboard';
-import { getCurrentUser, setCurrentUser, initStorage } from './services/storage';
+import { getCurrentUser, setCurrentUser, initStorage, isPortalLockedNow } from './services/storage';
 
 export default function App() {
   const [currentUser, setCurrentUserState] = useState(null);
   const [activeTab, setActiveTab] = useState('OVERVIEW');
+  const [isLocked, setIsLocked] = useState(false);
 
   useEffect(() => {
     initStorage();
@@ -18,6 +20,24 @@ export default function App() {
     if (user) {
       setCurrentUserState(user);
     }
+
+    // Check lock state initially
+    setIsLocked(isPortalLockedNow());
+
+    // Listen for manual override events from BK or timer checks
+    const handleLockEvent = () => {
+      setIsLocked(isPortalLockedNow());
+    };
+    window.addEventListener('portal_lock_changed', handleLockEvent);
+
+    const interval = setInterval(() => {
+      setIsLocked(isPortalLockedNow());
+    }, 10000);
+
+    return () => {
+      window.removeEventListener('portal_lock_changed', handleLockEvent);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleLoginSuccess = (user) => {
@@ -59,11 +79,18 @@ export default function App() {
           {/* Dynamic Dashboard Body Content */}
           <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
             {currentUser.role === 'STUDENT' && (
-              <StudentDashboard
-                currentUser={currentUser}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-              />
+              isLocked ? (
+                <StudentLockedView
+                  currentUser={currentUser}
+                  onLogout={handleLogout}
+                />
+              ) : (
+                <StudentDashboard
+                  currentUser={currentUser}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              )
             )}
 
             {currentUser.role === 'TEACHER' && (
