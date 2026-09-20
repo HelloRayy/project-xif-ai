@@ -88,11 +88,12 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
     });
   };
 
-  const teacherClass = currentUser?.assignedClass || 'X-IPA 1';
+  const [selectedClass, setSelectedClass] = useState(currentUser?.assignedClass || 'XI-A');
+  const teacherClass = selectedClass;
 
   useEffect(() => {
     loadData();
-  }, [currentUser, activeTab]);
+  }, [currentUser, activeTab, selectedClass]);
 
   const loadData = () => {
     if (!currentUser) return;
@@ -268,9 +269,22 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
               <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-zinc-50">
                 Selamat Datang, {currentUser.name}
               </h1>
-              <p className="text-sm font-normal text-slate-600 dark:text-zinc-400 mt-1">
-                Wali Kelas: <span className="font-medium text-slate-800 dark:text-zinc-200">{teacherClass}</span> • Portal Verifikasi & Rekap Presensi Siswa
-              </p>
+              <div className="flex flex-wrap items-center gap-2 text-sm font-normal text-slate-600 dark:text-zinc-400 mt-1">
+                <span>Wali Kelas:</span>
+                <select
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                  className="h-8 px-2.5 text-xs bg-background border border-border rounded-lg font-semibold text-blue-600 dark:text-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                >
+                  <option value="XI-A">Kelas XI-A</option>
+                  <option value="XI-B">Kelas XI-B</option>
+                  <option value="XI-C">Kelas XI-C</option>
+                  <option value="XI-D">Kelas XI-D</option>
+                  <option value="XI-E">Kelas XI-E</option>
+                  <option value="XI-F">Kelas XI-F</option>
+                </select>
+                <span>• Portal Verifikasi & Rekap Presensi Siswa</span>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -509,6 +523,19 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                 className="pl-9 h-9 text-xs bg-background border-slate-300 dark:border-zinc-700"
               />
             </div>
+
+            <select
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+              className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            >
+              <option value="XI-A">Kelas XI-A</option>
+              <option value="XI-B">Kelas XI-B</option>
+              <option value="XI-C">Kelas XI-C</option>
+              <option value="XI-D">Kelas XI-D</option>
+              <option value="XI-E">Kelas XI-E</option>
+              <option value="XI-F">Kelas XI-F</option>
+            </select>
 
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               <Button

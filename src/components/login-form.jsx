@@ -44,19 +44,22 @@ const ROLES = [
     value: "STUDENT",
     label: "Siswa (Murid)",
     icon: GraduationCap,
-    demoUser: "siswa.budi"
+    demoUser: "siswa.aditiya.lukmanul",
+    demoPassword: "user123"
   },
   {
     value: "TEACHER",
     label: "Wali Kelas / Guru",
     icon: UserCheck,
-    demoUser: "guru.ahmad"
+    demoUser: "guru.ahmad",
+    demoPassword: "password123"
   },
   {
     value: "ADMIN",
     label: "Staf Tata Usaha (TU) / Admin",
     icon: Building2,
-    demoUser: "admin.tu"
+    demoUser: "admin.tu",
+    demoPassword: "password123"
   },
 ]
 
@@ -84,10 +87,17 @@ export function LoginForm({
     }
 
     const users = getUsers()
+    const inputClean = username.toLowerCase().trim()
     const foundUser = users.find(
-      u => u.username.toLowerCase() === username.toLowerCase().trim() && 
-           u.password === password &&
-           u.role === selectedRole
+      u => (
+        u.username?.toLowerCase() === inputClean ||
+        u.username?.toLowerCase() === `siswa.${inputClean}` ||
+        u.name?.toLowerCase() === inputClean ||
+        u.nis?.toLowerCase() === inputClean ||
+        u.email?.toLowerCase() === inputClean
+      ) && 
+      (u.password === password || (u.role === 'STUDENT' && password === 'user123')) &&
+      u.role === selectedRole
     )
 
     if (foundUser) {
@@ -99,11 +109,18 @@ export function LoginForm({
   }
 
   const handleSelectRole = (currentValue) => {
-    setSelectedRole(currentValue === selectedRole ? "" : currentValue)
+    const nextRole = currentValue === selectedRole ? "" : currentValue
+    setSelectedRole(nextRole)
     setOpen(false)
     setErrorMsg("")
-    setUsername("")
-    setPassword("")
+    const r = ROLES.find(item => item.value === nextRole)
+    if (r) {
+      setUsername(r.demoUser)
+      setPassword(r.demoPassword || "user123")
+    } else {
+      setUsername("")
+      setPassword("")
+    }
   }
 
   const activeRole = ROLES.find(r => r.value === selectedRole)
@@ -214,7 +231,7 @@ export function LoginForm({
                 <Input
                   id="username"
                   type="text"
-                  placeholder={activeRole?.demoUser ? `Contoh: ${activeRole.demoUser}` : 'Masukkan username'}
+                  placeholder={selectedRole === 'STUDENT' ? 'Username / Nama Siswa / NIS' : activeRole?.demoUser ? `Contoh: ${activeRole.demoUser}` : 'Masukkan username'}
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -291,7 +308,9 @@ export function LoginForm({
               Informasi Kredensial Demo
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs text-slate-600 dark:text-zinc-400">
-              Untuk kebutuhan pengujian prototipe, password default seluruh akun demo (Siswa, Wali Kelas, dan Admin TU) adalah: <strong className="text-foreground font-mono">password123</strong>.
+              Password default seluruh akun Siswa (XI-A s/d XI-F) adalah: <strong className="text-foreground font-mono">user123</strong> (dapat masuk menggunakan Username, Nama Siswa, atau NIS).
+              <br /><br />
+              Untuk akun Staf TU (<span className="font-mono">admin.tu</span>) dan Wali Kelas (<span className="font-mono">guru.ahmad</span>, dll): <strong className="text-foreground font-mono">password123</strong>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

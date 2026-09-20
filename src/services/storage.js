@@ -13,302 +13,41 @@ const STORAGE_KEYS = {
   TEMPLATES: 'schooladmin_templates',
 };
 
+import {
+  initialStudents,
+  allInitialUsers,
+  initialRequests,
+  initialDocuments,
+  initialNotifications
+} from '../data/initialData';
+
 // Default Sample Data (used when Seed Data button is triggered or for reference)
 export const SEED_DATA = {
-  users: [
-    {
-      id: 'usr-admin-1',
-      username: 'admin.tu',
-      password: 'password123',
-      name: 'Hj. Ratna Sari, S.E.',
-      role: 'ADMIN',
-      roleLabel: 'Staf TU / Admin Utama',
-      email: 'tu.admin@sma1negeri.sch.id',
-      phone: '0812-9900-1122',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'usr-teacher-1',
-      username: 'guru.ahmad',
-      password: 'password123',
-      name: 'Ahmad Dahlan, S.Pd.',
-      role: 'TEACHER',
-      roleLabel: 'Wali Kelas X-IPA 1',
-      assignedClass: 'X-IPA 1',
-      email: 'ahmad.dahlan@sma1negeri.sch.id',
-      phone: '0813-8877-6655',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'usr-teacher-2',
-      username: 'guru.siti',
-      password: 'password123',
-      name: 'Siti Rahmawati, M.Pd.',
-      role: 'TEACHER',
-      roleLabel: 'Wali Kelas XI-IPS 2',
-      assignedClass: 'XI-IPS 2',
-      email: 'siti.rahma@sma1negeri.sch.id',
-      phone: '0813-1122-3344',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'usr-student-1',
-      username: 'siswa.budi',
-      password: 'password123',
-      name: 'Budi Santoso',
-      role: 'STUDENT',
-      roleLabel: 'Siswa Kelas X-IPA 1',
-      nis: '20261001',
-      nisn: '0081234567',
-      class: 'X-IPA 1',
-      gender: 'Laki-laki',
-      guardianName: 'Bambang Santoso',
-      guardianPhone: '0815-4433-2211',
-      address: 'Jl. Merdeka No. 45, Jakarta Pusat',
-      email: 'budi.santoso@siswa.sch.id',
-      phone: '0896-1234-5678',
-      avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80'
-    },
-    {
-      id: 'usr-student-2',
-      username: 'siswa.anisa',
-      password: 'password123',
-      name: 'Anisa Putri',
-      role: 'STUDENT',
-      roleLabel: 'Siswa Kelas X-IPA 1',
-      nis: '20261002',
-      nisn: '0081234568',
-      class: 'X-IPA 1',
-      gender: 'Perempuan',
-      guardianName: 'Hendra Putri',
-      guardianPhone: '0815-9988-7766',
-      address: 'Jl. Melati Indah No. 12, Jakarta Pusat',
-      email: 'anisa.putri@siswa.sch.id',
-      phone: '0896-8765-4321',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
-    }
-  ],
-  students: [
-    {
-      id: 'usr-student-1',
-      nis: '20261001',
-      nisn: '0081234567',
-      name: 'Budi Santoso',
-      class: 'X-IPA 1',
-      gender: 'Laki-laki',
-      guardianName: 'Bambang Santoso',
-      guardianPhone: '0815-4433-2211',
-      email: 'budi.santoso@siswa.sch.id',
-      phone: '0896-1234-5678',
-      status: 'Aktif'
-    },
-    {
-      id: 'usr-student-2',
-      nis: '20261002',
-      nisn: '0081234568',
-      name: 'Anisa Putri',
-      class: 'X-IPA 1',
-      gender: 'Perempuan',
-      guardianName: 'Hendra Putri',
-      guardianPhone: '0815-9988-7766',
-      email: 'anisa.putri@siswa.sch.id',
-      phone: '0896-8765-4321',
-      status: 'Aktif'
-    },
-    {
-      id: 'usr-student-4',
-      nis: '20261003',
-      nisn: '0081234569',
-      name: 'Dimas Pratama',
-      class: 'X-IPA 1',
-      gender: 'Laki-laki',
-      guardianName: 'Surya Pratama',
-      guardianPhone: '0812-7788-9900',
-      email: 'dimas.p@siswa.sch.id',
-      phone: '0857-1122-3344',
-      status: 'Aktif'
-    },
-    {
-      id: 'usr-student-5',
-      nis: '20261004',
-      nisn: '0081234570',
-      name: 'Nabila Azzahra',
-      class: 'X-IPA 1',
-      gender: 'Perempuan',
-      guardianName: 'Fauzi Rahman',
-      guardianPhone: '0813-4455-6677',
-      email: 'nabila.a@siswa.sch.id',
-      phone: '0878-9900-1122',
-      status: 'Aktif'
-    },
-    {
-      id: 'usr-student-6',
-      nis: '20261005',
-      nisn: '0081234571',
-      name: 'Rizky Ramadhan',
-      class: 'X-IPA 1',
-      gender: 'Laki-laki',
-      guardianName: 'Hadi Gunawan',
-      guardianPhone: '0811-2233-4455',
-      email: 'rizky.r@siswa.sch.id',
-      phone: '0819-3344-5566',
-      status: 'Aktif'
-    },
-    {
-      id: 'usr-student-7',
-      nis: '20261006',
-      nisn: '0081234572',
-      name: 'Tiara Andini',
-      class: 'X-IPA 1',
-      gender: 'Perempuan',
-      guardianName: 'Iwan Setiawan',
-      guardianPhone: '0852-6677-8899',
-      email: 'tiara.a@siswa.sch.id',
-      phone: '0821-5566-7788',
-      status: 'Aktif'
-    },
-    {
-      id: 'usr-student-3',
-      nis: '20262005',
-      nisn: '0075544332',
-      name: 'Citra Dewi',
-      class: 'XI-IPS 2',
-      gender: 'Perempuan',
-      guardianName: 'Agus Wijaya',
-      guardianPhone: '0812-3344-5566',
-      email: 'citra.dewi@siswa.sch.id',
-      phone: '0878-1122-3344',
-      status: 'Aktif'
-    }
-  ],
-  requests: [
-    {
-      id: 'REQ-2026-001',
-      type: 'SURAT_KETERANGAN',
-      subType: 'Surat Keterangan Siswa Aktif',
-      studentId: 'usr-student-1',
-      studentName: 'Budi Santoso',
-      studentNis: '20261001',
-      studentClass: 'X-IPA 1',
-      teacherName: 'Ahmad Dahlan, S.Pd.',
-      purpose: 'Persyaratan pengajuan Beasiswa Prestasi Kabupaten 2026',
-      startDate: '2026-08-15',
-      endDate: '2026-08-15',
-      status: 'DISETUJUI',
-      teacherNote: 'Disetujui. Siswa aktif berkelakuan baik.',
-      adminNote: 'Surat Keterangan Aktif telah diterbitkan dan diunggah.',
-      createdAt: '2026-08-10 09:30',
-      updatedAt: '2026-08-11 14:15',
-      attachments: [
-        { name: 'KTP_OrangTua.pdf', size: '420 KB', type: 'application/pdf' }
-      ],
-      timeline: [
-        { status: 'MENUNGGU_VERIFIKASI', note: 'Pengajuan dibuat oleh siswa', byName: 'Budi Santoso', timestamp: '2026-08-10 09:30' },
-        { status: 'DIPROSES_TU', note: 'Diverifikasi & disetujui Wali Kelas', byName: 'Ahmad Dahlan, S.Pd.', timestamp: '2026-08-10 11:45' },
-        { status: 'DISETUJUI', note: 'Surat diterbitkan & diunggah oleh TU', byName: 'Hj. Ratna Sari, S.E.', timestamp: '2026-08-11 14:15' }
-      ]
-    },
-    {
-      id: 'REQ-2026-002',
-      type: 'IZIN_TIDAK_HADIR',
-      subType: 'Izin Sakit',
-      studentId: 'usr-student-1',
-      studentName: 'Budi Santoso',
-      studentNis: '20261001',
-      studentClass: 'X-IPA 1',
-      teacherName: 'Ahmad Dahlan, S.Pd.',
-      purpose: 'Sakit Demam & Batuk (Istirahat dokter 2 hari)',
-      startDate: '2026-08-12',
-      endDate: '2026-08-13',
-      status: 'MENUNGGU_VERIFIKASI',
-      teacherNote: '',
-      adminNote: '',
-      createdAt: '2026-08-12 07:15',
-      updatedAt: '2026-08-12 07:15',
-      attachments: [
-        { 
-          name: 'Surat_Keterangan_Dokter_Klinik.jpg', 
-          size: '1.2 MB', 
-          type: 'image/jpeg',
-          previewUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1000&auto=format&fit=crop&q=80' 
-        }
-      ],
-      timeline: [
-        { status: 'MENUNGGU_VERIFIKASI', note: 'Pengajuan dibuat oleh siswa', byName: 'Budi Santoso', timestamp: '2026-08-12 07:15' }
-      ]
-    },
-    {
-      id: 'REQ-2026-003',
-      type: 'DISPENSASI',
-      subType: 'Dispensasi Lomba / Olimpas',
-      studentId: 'usr-student-2',
-      studentName: 'Anisa Putri',
-      studentNis: '20261002',
-      studentClass: 'X-IPA 1',
-      teacherName: 'Ahmad Dahlan, S.Pd.',
-      purpose: 'Mengikuti Babak Final OSN Informatika Tingkat Provinsi',
-      startDate: '2026-08-18',
-      endDate: '2026-08-20',
-      status: 'DIPROSES_TU',
-      teacherNote: 'Sangat didukung. Selamat berjuang untuk Anisa.',
-      adminNote: '',
-      createdAt: '2026-08-11 10:00',
-      updatedAt: '2026-08-11 13:20',
-      attachments: [
-        { name: 'Surat_Undangan_OSN_Provinsi.pdf', size: '850 KB', type: 'application/pdf' }
-      ],
-      timeline: [
-        { status: 'MENUNGGU_VERIFIKASI', note: 'Pengajuan dibuat oleh siswa', byName: 'Anisa Putri', timestamp: '2026-08-11 10:00' },
-        { status: 'DIPROSES_TU', note: 'Disetujui Wali Kelas & diteruskan ke TU', byName: 'Ahmad Dahlan, S.Pd.', timestamp: '2026-08-11 13:20' }
-      ]
-    }
-  ],
-  documents: [
-    {
-      id: 'DOC-2026-001',
-      title: 'Surat Keterangan Siswa Aktif - Budi Santoso (X-IPA 1)',
-      category: 'Surat Keterangan',
-      requestId: 'REQ-2026-001',
-      studentId: 'usr-student-1',
-      studentName: 'Budi Santoso',
-      fileName: 'Surat_Keterangan_Aktif_20261001.pdf',
-      fileSize: '512 KB',
-      uploadedBy: 'Hj. Ratna Sari, S.E. (TU)',
-      uploadedAt: '2026-08-11 14:15',
-      note: 'Diterbitkan secara resmi dengan cap stempel TU.'
-    }
-  ],
-  notifications: [
-    {
-      id: 'NOTIF-1',
-      userId: 'usr-student-1',
-      title: 'Pengajuan Disetujui!',
-      message: 'Surat Keterangan Aktif Siswa (REQ-2026-001) telah disetujui dan siap diunduh.',
-      type: 'success',
-      isRead: false,
-      createdAt: '2026-08-11 14:15'
-    },
-    {
-      id: 'NOTIF-2',
-      userId: 'usr-teacher-1',
-      title: 'Pengajuan Izin Baru',
-      message: 'Siswa Budi Santoso mengajukan Izin Sakit (REQ-2026-002) membutuhkan verifikasi Anda.',
-      type: 'warning',
-      isRead: false,
-      createdAt: '2026-08-12 07:15'
-    }
-  ]
+  users: allInitialUsers,
+  students: initialStudents,
+  requests: initialRequests,
+  documents: initialDocuments,
+  notifications: initialNotifications
 };
 
 // Initialize Storage helper
 export const initStorage = () => {
-  if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
-    // Default: Empty arrays as per user requirement, but we provide SEED button
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify([]));
-    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify([]));
-    localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify([]));
-    localStorage.setItem(STORAGE_KEYS.DOCUMENTS, JSON.stringify([]));
-    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
+  const currentStudents = localStorage.getItem(STORAGE_KEYS.STUDENTS);
+  if (!currentStudents || JSON.parse(currentStudents).length < 20) {
+    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(initialStudents));
+  }
+  const currentUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+  if (!currentUsers || JSON.parse(currentUsers).length < 20) {
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(allInitialUsers));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.REQUESTS)) {
+    localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(initialRequests));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.DOCUMENTS)) {
+    localStorage.setItem(STORAGE_KEYS.DOCUMENTS, JSON.stringify(initialDocuments));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS)) {
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(initialNotifications));
   }
 };
 
@@ -348,7 +87,12 @@ export const setCurrentUser = (user) => {
 
 export const getUsers = () => {
   const data = localStorage.getItem(STORAGE_KEYS.USERS);
-  return data ? JSON.parse(data) : [];
+  const users = data ? JSON.parse(data) : [];
+  if (users.length < 20) {
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(allInitialUsers));
+    return allInitialUsers;
+  }
+  return users;
 };
 
 export const saveUser = (newUser) => {
@@ -368,7 +112,7 @@ export const saveUser = (newUser) => {
       nis: newUser.nis || '2026999',
       nisn: newUser.nisn || '0089999',
       name: newUser.name,
-      class: newUser.class || 'X-IPA 1',
+      class: newUser.class || 'XI-A',
       gender: newUser.gender || 'Laki-laki',
       guardianName: newUser.guardianName || '-',
       guardianPhone: newUser.guardianPhone || '-',
@@ -382,9 +126,9 @@ export const saveUser = (newUser) => {
 
 export const getStudents = () => {
   const data = localStorage.getItem(STORAGE_KEYS.STUDENTS);
-  if (!data || JSON.parse(data).length < 4) {
-    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(SEED_DATA.students));
-    return SEED_DATA.students;
+  if (!data || JSON.parse(data).length < 20) {
+    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(initialStudents));
+    return initialStudents;
   }
   return JSON.parse(data);
 };

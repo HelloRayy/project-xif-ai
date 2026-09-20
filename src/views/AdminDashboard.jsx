@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
   Users, 
@@ -78,6 +78,23 @@ export default function AdminDashboard({ currentUser, activeTab }) {
   const [classFilter, setClassFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Student Database Filter States
+  const [studentSearchQuery, setStudentSearchQuery] = useState('');
+  const [studentClassFilter, setStudentClassFilter] = useState('ALL');
+
+  const displayedStudents = useMemo(() => {
+    return students.filter(st => {
+      const matchClass = studentClassFilter === 'ALL' || st.class === studentClassFilter;
+      const q = studentSearchQuery.toLowerCase().trim();
+      const matchSearch = !q ||
+        st.name?.toLowerCase().includes(q) ||
+        st.nis?.toLowerCase().includes(q) ||
+        st.guardianName?.toLowerCase().includes(q) ||
+        st.username?.toLowerCase().includes(q);
+      return matchClass && matchSearch;
+    });
+  }, [students, studentClassFilter, studentSearchQuery]);
+
   // TU Action Modal State
   const [selectedReqForTU, setSelectedReqForTU] = useState(null);
   const [tuActionNote, setTuActionNote] = useState('');
@@ -122,7 +139,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
   const [editingStudent, setEditingStudent] = useState(null);
   const [studentForm, setStudentForm] = useState({
     name: '',
-    class: 'X-IPA 1',
+    class: 'XI-A',
     gender: 'Laki-laki',
     guardianName: '',
     guardianPhone: '',
@@ -453,9 +470,12 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-600"
                 >
                   <option value="ALL">Semua Kelas</option>
-                  <option value="X-IPA 1">Kelas X-IPA 1</option>
-                  <option value="XI-IPS 2">Kelas XI-IPS 2</option>
-                  <option value="XII-IPA 1">Kelas XII-IPA 1</option>
+                  <option value="XI-A">Kelas XI-A</option>
+                  <option value="XI-B">Kelas XI-B</option>
+                  <option value="XI-C">Kelas XI-C</option>
+                  <option value="XI-D">Kelas XI-D</option>
+                  <option value="XI-E">Kelas XI-E</option>
+                  <option value="XI-F">Kelas XI-F</option>
                 </select>
               </div>
             </div>
@@ -776,6 +796,33 @@ export default function AdminDashboard({ currentUser, activeTab }) {
           </CardHeader>
 
           <CardContent className="p-0">
+            {/* Search & Class Filter Bar for Students */}
+            <div className="p-3 border-b border-border bg-muted/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Input
+                  type="text"
+                  value={studentSearchQuery}
+                  onChange={(e) => setStudentSearchQuery(e.target.value)}
+                  placeholder="Cari nama siswa, NIS, atau orang tua..."
+                  className="pl-9 h-9 text-xs bg-background"
+                />
+              </div>
+              <select
+                value={studentClassFilter}
+                onChange={(e) => setStudentClassFilter(e.target.value)}
+                className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-600 shrink-0"
+              >
+                <option value="ALL">Semua Kelas ({students.length} Siswa)</option>
+                <option value="XI-A">Kelas XI-A</option>
+                <option value="XI-B">Kelas XI-B</option>
+                <option value="XI-C">Kelas XI-C</option>
+                <option value="XI-D">Kelas XI-D</option>
+                <option value="XI-E">Kelas XI-E</option>
+                <option value="XI-F">Kelas XI-F</option>
+              </select>
+            </div>
+
             {/* Desktop Table View */}
             <div className="hidden md:block overflow-x-auto">
               <Table>
@@ -791,7 +838,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {students.map((st, idx) => (
+                  {displayedStudents.map((st, idx) => (
                     <TableRow key={st.id} className="hover:bg-muted/30">
                       <TableCell className="text-center font-mono text-xs text-muted-foreground">
                         {idx + 1}
@@ -854,7 +901,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
 
             {/* Mobile Touch-Friendly Card View */}
             <div className="md:hidden divide-y divide-border p-3 space-y-3">
-              {students.map((st) => (
+              {displayedStudents.map((st) => (
                 <div key={st.id} className="p-3.5 rounded-xl border border-border bg-card space-y-2.5 shadow-2xs">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
@@ -1440,9 +1487,12 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   onChange={(e) => setStudentForm({ ...studentForm, class: e.target.value })}
                   className="w-full h-9 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-slate-800 dark:text-zinc-200"
                 >
-                  <option value="X-IPA 1">X-IPA 1</option>
-                  <option value="XI-IPS 2">XI-IPS 2</option>
-                  <option value="XII-IPA 1">XII-IPA 1</option>
+                  <option value="XI-A">XI-A</option>
+                  <option value="XI-B">XI-B</option>
+                  <option value="XI-C">XI-C</option>
+                  <option value="XI-D">XI-D</option>
+                  <option value="XI-E">XI-E</option>
+                  <option value="XI-F">XI-F</option>
                 </select>
               </div>
 
