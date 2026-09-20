@@ -751,9 +751,6 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                             </div>
                             <div>
                               <p className="font-semibold text-xs text-slate-900 dark:text-zinc-100">{st.name}</p>
-                              <span className="text-[10px] text-muted-foreground">
-                                {st.gender === 'Perempuan' ? 'Perempuan' : 'Laki-laki'}
-                              </span>
                             </div>
                           </div>
                         </TableCell>
@@ -849,7 +846,6 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                         </div>
                         <div className="min-w-0">
                           <h4 className="font-semibold text-xs text-slate-900 dark:text-zinc-100 truncate">{st.name}</h4>
-                          <span className="text-[10px] text-muted-foreground">{st.gender || 'Laki-laki'}</span>
                         </div>
                       </div>
                       <div className="shrink-0">
@@ -1133,7 +1129,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                     <div className="min-w-0">
                       <h3 className="font-semibold text-sm text-slate-900 dark:text-zinc-100 truncate">{selectedStudentDetail.name}</h3>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {teacherClass} • {selectedStudentDetail.gender || 'Laki-laki'}
+                        {teacherClass}
                       </p>
                     </div>
                   </div>

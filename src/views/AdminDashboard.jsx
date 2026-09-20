@@ -955,7 +955,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   <TableRow className="bg-muted/40 hover:bg-muted/40">
                     <TableHead className="w-12 text-center text-xs font-semibold">No</TableHead>
                     <TableHead className="text-xs font-semibold">Nama Lengkap</TableHead>
-                    <TableHead className="w-24 text-xs font-semibold">Gender</TableHead>
                     <TableHead className="w-28 text-xs font-semibold">Kelas</TableHead>
                     <TableHead className="w-24 text-right text-xs font-semibold pr-4">Aksi</TableHead>
                   </TableRow>
@@ -968,9 +967,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                       </TableCell>
                       <TableCell>
                         <div className="font-semibold text-xs text-slate-900 dark:text-zinc-100">{st.name}</div>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {st.gender || 'Laki-laki'}
                       </TableCell>
                       <TableCell>
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
@@ -1014,7 +1010,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                       </div>
                       <div className="min-w-0">
                         <h4 className="font-semibold text-xs text-slate-900 dark:text-zinc-100 truncate">{st.name}</h4>
-                        <span className="text-[10px] text-muted-foreground">{st.gender || 'Laki-laki'}</span>
                       </div>
                     </div>
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
@@ -1056,57 +1051,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
       {/* =========================================================================
           TAB: REPORTS (Statistik Administrasi & Efisiensi)
           ========================================================================= */}
-      {activeTab === 'REPORTS' && (
-        <div className="space-y-4">
-          <Card className="rounded-xl border-border shadow-xs">
-            <CardHeader className="p-4 border-b border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <CardTitle className="text-sm font-semibold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-blue-600" />
-                  <span>Statistik & Ringkasan Digitalisasi Sekolah</span>
-                </CardTitle>
-                <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                  Indikator kinerja tata usaha, waktu respons, dan penghematan administrasi paperless.
-                </CardDescription>
-              </div>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExportExcel}
-                className="h-8 px-3 text-xs font-medium rounded-lg border-border gap-1.5 shadow-2xs"
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Unduh Laporan Lengkap (.xlsx)</span>
-              </Button>
-            </CardHeader>
-
-            <CardContent className="p-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div className="p-5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-border">
-                  <p className="text-xs font-medium text-muted-foreground">Tingkat Penyelesaian Pengajuan</p>
-                  <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">
-                    {requests.length > 0 ? `${((approvedTotal / requests.length) * 100).toFixed(0)}%` : '100%'}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-1">Disahkan secara digital tanpa berkas hilang</p>
-                </div>
-
-                <div className="p-5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-border">
-                  <p className="text-xs font-medium text-muted-foreground">Rata-rata Waktu Terbit Surat</p>
-                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">1 Hari Kerja</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">Memangkas proses manual (sebelumnya 3-5 hari)</p>
-                </div>
-
-                <div className="p-5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-border">
-                  <p className="text-xs font-medium text-muted-foreground">Efisiensi Paperless</p>
-                  <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">100% Digital</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">Bebas antrean fisik di ruang Tata Usaha</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {activeTab === 'REPORTS' && null}
 
       {/* =========================================================================
           DRAWER: Side-Sheet Detail Laporan Siswa untuk Guru BK (Panel Kanan Layar)
