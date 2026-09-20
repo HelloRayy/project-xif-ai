@@ -729,14 +729,13 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                     <TableHead className="text-center text-xs font-semibold text-slate-700 dark:text-zinc-300">
                       <span title="Tanpa Keterangan / Alfa">A</span>
                     </TableHead>
-                    <TableHead className="text-xs font-semibold text-slate-700 dark:text-zinc-300">Kontak Orang Tua / Wali</TableHead>
                     <TableHead className="text-right text-xs font-semibold text-slate-700 dark:text-zinc-300 pr-4">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredStudents.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-10 text-xs text-muted-foreground">
+                      <TableCell colSpan={8} className="text-center py-10 text-xs text-muted-foreground">
                         Tidak ditemukan data siswa dengan kriteria pencarian tersebut.
                       </TableCell>
                     </TableRow>
@@ -816,23 +815,6 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                         </TableCell>
                         <TableCell className="text-center text-xs font-normal text-slate-400">
                           0
-                        </TableCell>
-
-                        {/* Kontak Orang Tua / Wali */}
-                        <TableCell>
-                          <div className="space-y-0.5">
-                            <p className="text-xs font-medium text-slate-800 dark:text-zinc-200">{st.guardianName || 'Orang Tua'}</p>
-                            <a
-                              href={`https://wa.me/${(st.guardianPhone || '').replace(/[^0-9]/g, '')}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400 hover:underline"
-                              title="Chat WhatsApp Wali"
-                            >
-                              <Phone className="w-3 h-3" />
-                              <span>{st.guardianPhone || '-'}</span>
-                            </a>
-                          </div>
                         </TableCell>
 
                         {/* Tombol Aksi Riwayat */}
@@ -919,19 +901,9 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
 
                     {/* Footer Actions */}
                     <div className="flex items-center justify-between gap-2 pt-1">
-                      {st.guardianPhone ? (
-                        <a
-                          href={`https://wa.me/${st.guardianPhone.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-medium"
-                        >
-                          <Phone className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>WhatsApp Wali</span>
-                        </a>
-                      ) : (
-                        <span className="text-[11px] text-muted-foreground">Wali: {st.guardianName || '-'}</span>
-                      )}
+                      <span className="text-[11px] text-muted-foreground">
+                        Wali: <strong className="font-medium text-foreground">{st.guardianName || '-'}</strong>
+                      </span>
 
                       <Button
                         variant="outline"

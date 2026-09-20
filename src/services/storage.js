@@ -356,8 +356,8 @@ export const markNotificationsRead = (userId) => {
 
 /**
  * Portal Access Lock Helper for Students:
- * Operates between 07:30 and 15:30 WIB by default.
- * Mode: 'AUTO' (follows 07:30 - 15:30 schedule) | 'FORCE_UNLOCK' (emergency BK override) | 'FORCE_LOCKED'
+ * Operates between 07:30 and 16:30 WIB by default.
+ * Mode: 'AUTO' (follows 07:30 - 16:30 schedule) | 'FORCE_UNLOCK' (emergency BK override) | 'FORCE_LOCKED'
  */
 export const getPortalLockMode = () => {
   return localStorage.getItem(STORAGE_KEYS.PORTAL_LOCK) || 'AUTO';
@@ -377,7 +377,7 @@ export const isPortalLockedNow = () => {
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const lockStartMinutes = 7 * 60 + 30;  // 07:30
-  const lockEndMinutes = 15 * 60 + 30;   // 15:30
+  const lockEndMinutes = 16 * 60 + 30;  // 16:30
 
   return currentMinutes >= lockStartMinutes && currentMinutes < lockEndMinutes;
 };

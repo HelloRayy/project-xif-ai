@@ -112,7 +112,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
         ? 'Portal siswa berhasil dibuka paksa (Override Darurat). Siswa dapat mengajukan izin saat ini.' 
         : newMode === 'FORCE_LOCKED'
         ? 'Portal siswa berhasil dikunci secara manual.'
-        : 'Mode operasional portal siswa dikembalikan ke Jadwal Otomatis (07.30 - 15.30 WIB tertutup).',
+        : 'Mode operasional portal siswa dikembalikan ke Jadwal Otomatis (07.30 - 16.30 WIB tertutup).',
       'Mengerti'
     );
   };
@@ -962,7 +962,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                     <TableHead className="w-24 text-xs font-semibold">Gender</TableHead>
                     <TableHead className="w-28 text-xs font-semibold">Kelas</TableHead>
                     <TableHead className="text-xs font-semibold">Orang Tua / Wali</TableHead>
-                    <TableHead className="text-xs font-semibold">Kontak WhatsApp</TableHead>
                     <TableHead className="w-24 text-right text-xs font-semibold pr-4">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -974,7 +973,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                       </TableCell>
                       <TableCell>
                         <div className="font-semibold text-xs text-slate-900 dark:text-zinc-100">{st.name}</div>
-                        <span className="text-[11px] text-muted-foreground">{st.email || 'Email belum diatur'}</span>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {st.gender || 'Laki-laki'}
@@ -986,21 +984,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                       </TableCell>
                       <TableCell className="text-xs font-medium text-slate-800 dark:text-zinc-200">
                         {st.guardianName || '-'}
-                      </TableCell>
-                      <TableCell>
-                        {st.guardianPhone ? (
-                          <a
-                            href={`https://wa.me/${st.guardianPhone.replace(/[^0-9]/g, '')}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400 font-medium hover:underline"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>{st.guardianPhone}</span>
-                          </a>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">-</span>
-                        )}
                       </TableCell>
                       <TableCell className="text-right pr-4 space-x-1">
                         <Button
@@ -1048,21 +1031,9 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1 border-t border-border">
-                    <div>
-                      {st.guardianPhone ? (
-                        <a
-                          href={`https://wa.me/${st.guardianPhone.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400 hover:underline"
-                        >
-                          <MessageCircle className="w-3 h-3 text-emerald-600" />
-                          <span>{st.guardianPhone}</span>
-                        </a>
-                      ) : (
-                        <span className="text-[11px] text-muted-foreground">Wali: {st.guardianName || '-'}</span>
-                      )}
-                    </div>
+                    <span className="text-[11px] text-muted-foreground">
+                      Wali: <strong className="font-medium text-foreground">{st.guardianName || '-'}</strong>
+                    </span>
                     <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
