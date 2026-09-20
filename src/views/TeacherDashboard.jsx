@@ -259,8 +259,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
 
   // Filtered Students List
   const filteredStudents = studentAttendanceData.filter((s) => {
-    const matchesSearch = s.name.toLowerCase().includes(studentSearch.toLowerCase().trim()) ||
-                          (s.guardianName && s.guardianName.toLowerCase().includes(studentSearch.toLowerCase().trim()));
+    const matchesSearch = s.name.toLowerCase().includes(studentSearch.toLowerCase().trim());
     
     if (!matchesSearch) return false;
 
@@ -290,9 +289,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
         'Izin (I)': s.izinDays,
         'Dispensasi (D)': s.dispDays,
         'Alfa (A)': s.alfaDays,
-        'Total Ketidakhadiran': `${s.totalAbsence} Hari`,
-        'Nama Wali': s.guardianName || '-',
-        'No. HP Wali': s.guardianPhone || '-'
+        'Total Ketidakhadiran': `${s.totalAbsence} Hari`
       }));
 
       const ws = XLSX.utils.json_to_sheet(dataToExport);
@@ -900,11 +897,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="flex items-center justify-between gap-2 pt-1">
-                      <span className="text-[11px] text-muted-foreground">
-                        Wali: <strong className="font-medium text-foreground">{st.guardianName || '-'}</strong>
-                      </span>
-
+                    <div className="flex items-center justify-end gap-2 pt-1">
                       <Button
                         variant="outline"
                         size="sm"
@@ -1170,23 +1163,6 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                   </div>
                 </div>
 
-                {/* Guardian Info & Quick WhatsApp CTA */}
-                <div className="pt-3 border-t border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                  <div className="text-xs">
-                    <span className="text-slate-500 text-[11px] block">Orang Tua / Wali:</span>
-                    <span className="font-medium text-slate-800 dark:text-zinc-200">{selectedStudentDetail.guardianName || 'Orang Tua'}</span>
-                  </div>
-
-                  <a
-                    href={`https://wa.me/${(selectedStudentDetail.guardianPhone || '').replace(/[^0-9]/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-100 dark:hover:bg-emerald-950/70 transition-colors shadow-2xs self-start sm:self-auto"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Chat WhatsApp Wali</span>
-                  </a>
-                </div>
               </div>
 
               {/* Presensi S/I/D/A Recap Grid */}

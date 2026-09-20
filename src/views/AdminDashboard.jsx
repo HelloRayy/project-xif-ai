@@ -128,7 +128,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
       const matchSearch = !q ||
         st.name?.toLowerCase().includes(q) ||
         st.nis?.toLowerCase().includes(q) ||
-        st.guardianName?.toLowerCase().includes(q) ||
         st.username?.toLowerCase().includes(q);
       return matchClass && matchSearch;
     });
@@ -691,7 +690,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 <TableHeader>
                   <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border">
                     <TableHead className="w-32 py-3 px-4 text-xs font-semibold whitespace-nowrap">ID Pengajuan</TableHead>
-                    <TableHead className="min-w-[200px] py-3 px-4 text-xs font-semibold whitespace-nowrap">Siswa & Wali</TableHead>
+                    <TableHead className="min-w-[180px] py-3 px-4 text-xs font-semibold whitespace-nowrap">Nama Siswa</TableHead>
                     <TableHead className="w-28 py-3 px-4 text-xs font-semibold whitespace-nowrap">Kelas</TableHead>
                     <TableHead className="min-w-[190px] py-3 px-4 text-xs font-semibold whitespace-nowrap">Jenis Layanan</TableHead>
                     <TableHead className="min-w-[240px] py-3 px-4 text-xs font-semibold">Keperluan & Waktu</TableHead>
@@ -716,8 +715,8 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                           {r.id}
                         </TableCell>
 
-                        {/* Siswa & Wali */}
-                        <TableCell className="py-3.5 px-4 min-w-[200px]">
+                        {/* Nama Siswa */}
+                        <TableCell className="py-3.5 px-4 min-w-[180px]">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-semibold text-xs flex items-center justify-center shrink-0 border border-purple-200/60 dark:border-purple-900/60">
                               {r.studentName.slice(0, 2).toUpperCase()}
@@ -725,9 +724,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                             <div className="min-w-0">
                               <span className="font-semibold text-xs text-slate-900 dark:text-zinc-100 truncate block">
                                 {r.studentName}
-                              </span>
-                              <span className="text-[11px] text-muted-foreground truncate block mt-0.5">
-                                {r.teacherName ? `Wali: ${r.teacherName}` : 'Wali Kelas'}
                               </span>
                             </div>
                           </div>
@@ -961,7 +957,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                     <TableHead className="text-xs font-semibold">Nama Lengkap</TableHead>
                     <TableHead className="w-24 text-xs font-semibold">Gender</TableHead>
                     <TableHead className="w-28 text-xs font-semibold">Kelas</TableHead>
-                    <TableHead className="text-xs font-semibold">Orang Tua / Wali</TableHead>
                     <TableHead className="w-24 text-right text-xs font-semibold pr-4">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -981,9 +976,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
                           {st.class}
                         </span>
-                      </TableCell>
-                      <TableCell className="text-xs font-medium text-slate-800 dark:text-zinc-200">
-                        {st.guardianName || '-'}
                       </TableCell>
                       <TableCell className="text-right pr-4 space-x-1">
                         <Button
@@ -1030,10 +1022,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs pt-1 border-t border-border">
-                    <span className="text-[11px] text-muted-foreground">
-                      Wali: <strong className="font-medium text-foreground">{st.guardianName || '-'}</strong>
-                    </span>
+                  <div className="flex items-center justify-end text-xs pt-1 border-t border-border">
                     <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
@@ -1062,91 +1051,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
         </Card>
       )}
 
-      {/* =========================================================================
-          TAB: DOCUMENTS_STORE / ARCHIVE (Arsip Dokumen Sekolah & Digital Stamping)
-          ========================================================================= */}
-      {(activeTab === 'DOCUMENTS_STORE' || activeTab === 'ARCHIVE') && (
-        <Card className="rounded-xl border-border shadow-xs overflow-hidden">
-          <CardHeader className="p-4 border-b border-border bg-muted/20">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <CardTitle className="text-sm font-semibold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
-                  <FolderArchive className="w-4 h-4 text-blue-600" />
-                  <span>Arsip Terpusat Surat Resmi & Dokumen Sah</span>
-                </CardTitle>
-                <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                  Seluruh berkas surat keputusan, dispensasi, dan surat keterangan yang telah dibubuhi stempel resmi TU.
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
 
-          <CardContent className="p-5">
-            {documents.length === 0 ? (
-              <div className="text-center py-12 border border-dashed rounded-xl text-muted-foreground text-xs">
-                <FileText className="w-9 h-9 mx-auto mb-2 opacity-40 text-blue-600" />
-                <p className="font-semibold text-slate-700 dark:text-zinc-300">Belum ada dokumen yang diterbitkan</p>
-                <p className="text-[11px] text-slate-500 mt-0.5">Surat resmi yang disahkan TU akan otomatis terarsip di sini.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                {documents.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="p-4 rounded-xl border border-border bg-card shadow-xs flex flex-col justify-between gap-3 hover:border-blue-300 dark:hover:border-blue-900 transition-colors"
-                  >
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-sans text-[11px] text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded">
-                          {doc.letterNumber || doc.id}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">{doc.uploadedAt}</span>
-                      </div>
-                      <h4 className="text-xs font-semibold text-slate-900 dark:text-zinc-100">{doc.title}</h4>
-                      <p className="text-[11px] text-muted-foreground">
-                        Siswa: <strong>{doc.studentName}</strong> • {doc.fileSize}
-                      </p>
-                      {doc.note && (
-                        <p className="text-[11px] text-slate-600 dark:text-zinc-400 italic">
-                          "{doc.note}"
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="pt-3 border-t border-border flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Cap Stempel Digital Sah</span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setViewingCertDoc(doc)}
-                          className="h-7 px-2.5 text-xs font-medium rounded-lg gap-1 border-border"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-blue-600" />
-                          <span>Pratinjau Surat</span>
-                        </Button>
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={() => showAlert('Unduh Dokumen', `Mengunduh file resmi: ${doc.fileName}`, 'Selesai')}
-                          className="h-7 px-2.5 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white gap-1"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          <span>Unduh</span>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
 
       {/* =========================================================================
           TAB: REPORTS (Statistik Administrasi & Efisiensi)
@@ -1218,7 +1123,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   Detail Laporan Izin Siswa
                 </SheetTitle>
                 <SheetDescription className="text-xs text-muted-foreground mt-0.5">
-                  Informasi lengkap permohonan izin siswa, kontak wali, dan dokumen bukti untuk pemantauan BK.
+                  Informasi lengkap permohonan izin siswa dan dokumen bukti untuk pemantauan BK.
                 </SheetDescription>
               </div>
             </div>
@@ -1485,7 +1390,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
               {editingStudent ? 'Edit Data Siswa' : 'Tambah Siswa Baru'}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Masukkan identitas siswa dan data kontak wali murid.
+              Masukkan identitas dan kelas siswa.
             </DialogDescription>
           </DialogHeader>
 
@@ -1540,29 +1445,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="space-y-1">
-                <label className="font-semibold text-slate-900 dark:text-zinc-100">Nama Orang Tua / Wali</label>
-                <Input
-                  type="text"
-                  value={studentForm.guardianName}
-                  onChange={(e) => setStudentForm({ ...studentForm, guardianName: e.target.value })}
-                  placeholder="Nama orang tua"
-                  className="h-9 text-xs rounded-lg bg-background border-border"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-semibold text-slate-900 dark:text-zinc-100">No. WhatsApp Wali</label>
-                <Input
-                  type="text"
-                  value={studentForm.guardianPhone}
-                  onChange={(e) => setStudentForm({ ...studentForm, guardianPhone: e.target.value })}
-                  placeholder="0812-xxxx-xxxx"
-                  className="h-9 text-xs rounded-lg bg-background border-border"
-                />
-              </div>
-            </div>
+            {/* Student info inputs */}
 
             <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
               <Button

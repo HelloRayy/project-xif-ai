@@ -104,11 +104,6 @@ export function AppSidebar({
         icon: Users,
       },
       {
-        id: 'ARCHIVE',
-        title: 'Arsip Dokumen Perizinan',
-        icon: FolderArchive,
-      },
-      {
         id: 'REPORTS',
         title: 'Rekap & Statistik Absensi',
         icon: BarChart3,
