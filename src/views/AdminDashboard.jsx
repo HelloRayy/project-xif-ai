@@ -429,54 +429,56 @@ export default function AdminDashboard({ currentUser, activeTab }) {
     <div className="space-y-6">
       
       {/* 1. Header Minimalis & Kontrol Emergency Lock Siswa */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-zinc-50">
-              Bimbingan & Konseling (BK) — Monitoring Perizinan Terpadu
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50">
+              Bimbingan & Konseling (BK)
             </h1>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-900/60">
               Guru BK
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Pusat pemantauan izin siswa lintas kelas (XI-A s/d XI-F), rekap absensi, dan kontrol akses portal siswa.
+          <p className="text-xs text-muted-foreground mt-1">
+            Monitoring perizinan terpadu siswa (XI-A s/d XI-F), rekap absensi, dan kontrol akses portal siswa.
           </p>
         </div>
 
-        {/* Real-time Clock, Emergency Lock Control Widget & Export Button */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Real-time WIB Clock Widget - Borderless & Larger */}
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
-              <Clock className="w-5 h-5" />
+        {/* Action Controls Toolbar */}
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
+          {/* Real-time WIB Clock Widget - Borderless Pill */}
+          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-muted/50 dark:bg-zinc-900/60">
+            <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-xs font-semibold text-muted-foreground leading-tight">
+              <span className="text-[11px] font-medium text-muted-foreground leading-none">
                 {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
               </span>
-              <span className="font-sans text-sm sm:text-base font-bold text-foreground leading-tight tracking-tight">
+              <span className="font-sans text-xs sm:text-sm font-bold text-foreground leading-tight mt-0.5 tracking-tight">
                 {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
               </span>
             </div>
           </div>
 
+          <div className="hidden sm:block h-6 w-px bg-border/80" />
+
           {/* Portal Siswa Access Toggle Switch */}
-          <div className="flex items-center gap-3 px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs">
+          <div className="flex items-center gap-3 px-3 py-1.5 rounded-xl border border-border bg-card shadow-2xs">
             <div className="flex items-center gap-2">
               {!isCurrentlyLocked ? (
-                <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <div className="w-6 h-6 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                   <Unlock className="w-3.5 h-3.5" />
                 </div>
               ) : (
-                <div className="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <div className="w-6 h-6 rounded-md bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
                   <Lock className="w-3.5 h-3.5" />
                 </div>
               )}
               <div className="flex flex-col">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold">Akses Portal Siswa</span>
-                <span className={cn("text-xs font-bold", !isCurrentlyLocked ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")}>
-                  {!isCurrentlyLocked ? "Akses Terbuka" : "Akses Terkunci"}
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold leading-none">Akses Siswa</span>
+                <span className={cn("text-xs font-bold leading-tight mt-0.5", !isCurrentlyLocked ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")}>
+                  {!isCurrentlyLocked ? "Terbuka" : "Terkunci"}
                 </span>
               </div>
             </div>
@@ -490,13 +492,15 @@ export default function AdminDashboard({ currentUser, activeTab }) {
             />
           </div>
 
+          {/* Export Excel Button */}
           <Button
             variant="outline"
             onClick={handleExportExcel}
-            className="h-9 px-3.5 text-xs font-medium rounded-xl border-border hover:bg-muted gap-2 shadow-2xs"
+            className="h-10 px-3.5 text-xs font-medium rounded-xl border-border hover:bg-muted gap-2 shadow-2xs shrink-0"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>Ekspor Rekap (.xlsx)</span>
+            <span className="hidden sm:inline">Ekspor Rekap (.xlsx)</span>
+            <span className="sm:hidden">Ekspor</span>
           </Button>
         </div>
       </div>
