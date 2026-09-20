@@ -113,6 +113,11 @@
   scroll-behavior: auto !important;
 }
 
+/* Enforce clean Inter typography universally across the entire application */
+body, button, input, select, textarea, [class*="font-mono"], code, pre {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
 /* Print Media Styles for Official Reports */
 @media print {
   body * {

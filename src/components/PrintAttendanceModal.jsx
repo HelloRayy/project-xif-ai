@@ -143,7 +143,7 @@ export default function PrintAttendanceModal({
                 </div>
                 <div className="flex">
                   <span className="w-24 text-slate-500 font-medium">NIP</span>
-                  <span className="text-slate-800 font-mono">: {teacherNip}</span>
+                  <span className="text-slate-800 font-sans">: {teacherNip}</span>
                 </div>
               </div>
 
@@ -184,9 +184,9 @@ export default function PrintAttendanceModal({
                 <tbody>
                   {studentRows.map((r) => (
                     <tr key={r.no} className="border-b border-slate-200 hover:bg-slate-50">
-                      <td className="border border-slate-300 p-1.5 text-center text-slate-500 font-mono">{r.no}</td>
-                      <td className="border border-slate-300 p-1.5 text-center font-mono text-[10px]">{r.nis}</td>
-                      <td className="border border-slate-300 p-1.5 text-center font-mono text-[10px]">{r.nisn}</td>
+                      <td className="border border-slate-300 p-1.5 text-center text-slate-500 font-sans">{r.no}</td>
+                      <td className="border border-slate-300 p-1.5 text-center font-sans text-[10px]">{r.nis}</td>
+                      <td className="border border-slate-300 p-1.5 text-center font-sans text-[10px]">{r.nisn}</td>
                       <td className="border border-slate-300 p-1.5 font-medium text-slate-900">{r.name}</td>
                       <td className="border border-slate-300 p-1.5 text-center text-slate-600">{r.gender}</td>
                       <td className="border border-slate-300 p-1.5 text-center font-semibold text-rose-700">{r.sakit || '-'}</td>
@@ -223,7 +223,7 @@ export default function PrintAttendanceModal({
                 <p className="font-bold text-slate-900 underline underline-offset-2">
                   Dra. Hj. Sri Lestari, M.Pd.
                 </p>
-                <p className="text-slate-600 font-mono text-[10px]">
+                <p className="text-slate-600 font-sans text-[10px]">
                   NIP. 19680514 199303 2 004
                 </p>
               </div>
@@ -237,7 +237,7 @@ export default function PrintAttendanceModal({
                 <p className="font-bold text-slate-900 underline underline-offset-2">
                   {teacherName}
                 </p>
-                <p className="text-slate-600 font-mono text-[10px]">
+                <p className="text-slate-600 font-sans text-[10px]">
                   NIP. {teacherNip}
                 </p>
               </div>

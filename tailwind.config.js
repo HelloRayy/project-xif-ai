@@ -25,10 +25,16 @@ export default {
           'Arial',
           'sans-serif'
         ],
+        mono: [
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'sans-serif'
+        ],
         display: [
-          'Roboto Slab',
-          'Georgia',
-          'serif'
+          'Inter',
+          'sans-serif'
         ]
       },
       colors: {

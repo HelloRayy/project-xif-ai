@@ -540,7 +540,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                   <span className="text-[10px] text-muted-foreground uppercase font-semibold">
                     {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
                   </span>
-                  <span className="font-mono text-xs font-bold text-foreground">
+                  <span className="font-sans text-xs font-bold text-foreground">
                     {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
                   </span>
                 </div>
@@ -614,7 +614,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                     >
                       <div>
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-xs font-mono font-medium text-slate-500 dark:text-zinc-400">{r.id}</span>
+                          <span className="text-xs font-sans font-medium text-slate-500 dark:text-zinc-400">{r.id}</span>
                           {getStatusBadge(r.status)}
                         </div>
                         <h4 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{r.subType}</h4>
@@ -688,7 +688,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                       {ActiveServiceIcon ? (
                         <ActiveServiceIcon className="w-4 h-4 shrink-0 text-blue-600" />
                       ) : (
-                        <span className="text-slate-400 font-mono text-base">-</span>
+                        <span className="text-slate-400 font-sans text-base">-</span>
                       )}
                       <span className={cn(
                         "truncate text-sm",
@@ -906,7 +906,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                     <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-medium">
                       <span>👉 Geser ke kanan untuk Jam 1 — 10</span>
                     </span>
-                    <span className="text-[10px] bg-muted px-2 py-0.5 rounded-md font-mono">10 JP Aktif</span>
+                    <span className="text-[10px] bg-muted px-2 py-0.5 rounded-md font-sans">10 JP Aktif</span>
                   </div>
                   
                   {/* Single Horizontal Scrollable Row (10 Kolom) */}
@@ -1207,7 +1207,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                       <TableBody>
                         {requests.map((r) => (
                           <TableRow key={r.id} className="hover:bg-muted/40">
-                            <TableCell className="font-mono text-xs text-slate-600 dark:text-zinc-400 font-medium">{r.id}</TableCell>
+                            <TableCell className="font-sans text-xs text-slate-600 dark:text-zinc-400 font-medium">{r.id}</TableCell>
                             <TableCell>
                               <p className="font-medium text-sm text-slate-900 dark:text-zinc-100">{r.subType}</p>
                               <p className="text-xs font-normal text-slate-500 dark:text-zinc-400 line-clamp-1">{r.purpose}</p>
@@ -1250,7 +1250,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                     {requests.map((r) => (
                       <div key={r.id} className="p-3.5 rounded-xl border border-border bg-card space-y-2.5 shadow-2xs">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">{r.id}</span>
+                          <span className="font-sans text-xs font-semibold text-blue-600 dark:text-blue-400">{r.id}</span>
                           {getStatusBadge(r.status)}
                         </div>
                         <div>
@@ -1354,10 +1354,10 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/40">
+                  <span className="text-[10px] font-sans font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/40">
                     Detail Timeline
                   </span>
-                  <span className="text-xs font-mono text-muted-foreground">{selectedReqDetail?.id}</span>
+                  <span className="text-xs font-sans text-muted-foreground">{selectedReqDetail?.id}</span>
                 </div>
                 <SheetTitle className="text-base font-semibold text-slate-900 dark:text-zinc-50 mt-1 truncate">
                   {selectedReqDetail?.subType}
@@ -1488,7 +1488,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
 
                               {/* Top Badge on Canvas */}
                               <div className="absolute top-2.5 left-2.5">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-medium shadow-xs">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[10px] font-sans font-medium shadow-xs">
                                   <ImageIcon className="w-3 h-3 text-blue-300" />
                                   <span>{ext}</span>
                                 </span>
@@ -1527,7 +1527,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                                 <span className="font-semibold text-xs text-slate-900 dark:text-zinc-100 truncate block">
                                   {att.name}
                                 </span>
-                                <span className="shrink-0 px-1.5 py-0.2 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-mono text-[9px] font-semibold uppercase">
+                                <span className="shrink-0 px-1.5 py-0.2 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-sans text-[9px] font-semibold uppercase">
                                   {ext}
                                 </span>
                               </div>
@@ -1691,7 +1691,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
               <div className="p-3.5 bg-slate-50 dark:bg-zinc-900/60 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2">
                 <div className="flex items-center justify-between border-b border-border pb-2">
                   <span className="text-slate-500 font-medium">Nomor Pengajuan:</span>
-                  <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">{submittedSuccessModal.id}</span>
+                  <span className="font-sans font-semibold text-blue-600 dark:text-blue-400">{submittedSuccessModal.id}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 font-medium">Jenis Izin:</span>

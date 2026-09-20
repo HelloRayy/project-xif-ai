@@ -32,6 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Input } from '../components/ui/input';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -321,18 +322,19 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
               </h1>
               <div className="flex flex-wrap items-center gap-2 text-sm font-normal text-slate-600 dark:text-zinc-400 mt-1">
                 <span>Wali Kelas:</span>
-                <select
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                  className="h-8 px-2.5 text-xs bg-background border border-border rounded-lg font-semibold text-blue-600 dark:text-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-                >
-                  <option value="XI-A">Kelas XI-A</option>
-                  <option value="XI-B">Kelas XI-B</option>
-                  <option value="XI-C">Kelas XI-C</option>
-                  <option value="XI-D">Kelas XI-D</option>
-                  <option value="XI-E">Kelas XI-E</option>
-                  <option value="XI-F">Kelas XI-F</option>
-                </select>
+                <Select value={selectedClass} onValueChange={(val) => setSelectedClass(val)}>
+                  <SelectTrigger className="h-8 w-[125px] text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    <SelectValue placeholder="Pilih Kelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="XI-A">Kelas XI-A</SelectItem>
+                    <SelectItem value="XI-B">Kelas XI-B</SelectItem>
+                    <SelectItem value="XI-C">Kelas XI-C</SelectItem>
+                    <SelectItem value="XI-D">Kelas XI-D</SelectItem>
+                    <SelectItem value="XI-E">Kelas XI-E</SelectItem>
+                    <SelectItem value="XI-F">Kelas XI-F</SelectItem>
+                  </SelectContent>
+                </Select>
                 <span>• Portal Verifikasi & Rekap Presensi Siswa</span>
               </div>
             </div>
@@ -345,7 +347,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                   <span className="text-[10px] text-muted-foreground uppercase font-semibold">
                     {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
                   </span>
-                  <span className="font-mono text-xs font-bold text-foreground">
+                  <span className="font-sans text-xs font-bold text-foreground">
                     {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
                   </span>
                 </div>
@@ -376,24 +378,25 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                   <Calendar className="w-3.5 h-3.5 text-slate-500" />
                   <span className="hidden sm:inline">Filter Tanggal:</span>
                 </div>
-                <select
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
-                  className="h-8 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-                >
-                  <option value="ALL">Semua Tanggal</option>
-                  <option value="TODAY">Hari Ini</option>
-                  <option value="LAST_7_DAYS">7 Hari Terakhir</option>
-                  <option value="THIS_MONTH">Bulan Ini</option>
-                  <option value="CUSTOM">Pilih Tanggal Tertentu...</option>
-                </select>
+                <Select value={dateFilter} onValueChange={(val) => setDateFilter(val)}>
+                  <SelectTrigger className="h-8 w-[145px] text-xs font-medium">
+                    <SelectValue placeholder="Filter Tanggal" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">Semua Tanggal</SelectItem>
+                    <SelectItem value="TODAY">Hari Ini</SelectItem>
+                    <SelectItem value="LAST_7_DAYS">7 Hari Terakhir</SelectItem>
+                    <SelectItem value="THIS_MONTH">Bulan Ini</SelectItem>
+                    <SelectItem value="CUSTOM">Pilih Tanggal...</SelectItem>
+                  </SelectContent>
+                </Select>
 
                 {dateFilter === 'CUSTOM' && (
                   <input
                     type="date"
                     value={customDate}
                     onChange={(e) => setCustomDate(e.target.value)}
-                    className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
                   />
                 )}
               </div>
@@ -414,7 +417,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-slate-500 dark:text-zinc-400 font-medium">{r.id}</span>
+                        <span className="text-xs font-sans text-slate-500 dark:text-zinc-400 font-medium">{r.id}</span>
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">{r.subType}</span>
                         <span className="text-xs text-slate-500">• {r.createdAt}</span>
                       </div>
@@ -489,24 +492,25 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                 <Calendar className="w-3.5 h-3.5 text-slate-500" />
                 <span className="hidden sm:inline">Filter Tanggal:</span>
               </div>
-              <select
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="h-8 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-              >
-                <option value="ALL">Semua Tanggal</option>
-                <option value="TODAY">Hari Ini</option>
-                <option value="LAST_7_DAYS">7 Hari Terakhir</option>
-                <option value="THIS_MONTH">Bulan Ini</option>
-                <option value="CUSTOM">Pilih Tanggal Tertentu...</option>
-              </select>
+              <Select value={dateFilter} onValueChange={(val) => setDateFilter(val)}>
+                <SelectTrigger className="h-8 w-[145px] text-xs font-medium">
+                  <SelectValue placeholder="Filter Tanggal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">Semua Tanggal</SelectItem>
+                  <SelectItem value="TODAY">Hari Ini</SelectItem>
+                  <SelectItem value="LAST_7_DAYS">7 Hari Terakhir</SelectItem>
+                  <SelectItem value="THIS_MONTH">Bulan Ini</SelectItem>
+                  <SelectItem value="CUSTOM">Pilih Tanggal...</SelectItem>
+                </SelectContent>
+              </Select>
 
               {dateFilter === 'CUSTOM' && (
                 <input
                   type="date"
                   value={customDate}
                   onChange={(e) => setCustomDate(e.target.value)}
-                  className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
                 />
               )}
             </div>
@@ -527,7 +531,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-slate-500 font-medium">{r.id}</span>
+                      <span className="text-xs font-sans text-slate-500 font-medium">{r.id}</span>
                       <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">{r.subType}</span>
                       <span className="text-xs text-slate-500">• {r.createdAt}</span>
                     </div>
@@ -659,18 +663,19 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
               />
             </div>
 
-            <select
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-              className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-600"
-            >
-              <option value="XI-A">Kelas XI-A</option>
-              <option value="XI-B">Kelas XI-B</option>
-              <option value="XI-C">Kelas XI-C</option>
-              <option value="XI-D">Kelas XI-D</option>
-              <option value="XI-E">Kelas XI-E</option>
-              <option value="XI-F">Kelas XI-F</option>
-            </select>
+            <Select value={selectedClass} onValueChange={(val) => setSelectedClass(val)}>
+              <SelectTrigger className="h-9 w-[130px] text-xs font-medium">
+                <SelectValue placeholder="Pilih Kelas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="XI-A">Kelas XI-A</SelectItem>
+                <SelectItem value="XI-B">Kelas XI-B</SelectItem>
+                <SelectItem value="XI-C">Kelas XI-C</SelectItem>
+                <SelectItem value="XI-D">Kelas XI-D</SelectItem>
+                <SelectItem value="XI-E">Kelas XI-E</SelectItem>
+                <SelectItem value="XI-F">Kelas XI-F</SelectItem>
+              </SelectContent>
+            </Select>
 
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               <Button
@@ -1002,7 +1007,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                                   className="max-h-full max-w-full object-contain rounded-lg shadow-2xs group-hover:scale-105 transition-transform duration-300 ease-out"
                                 />
                                 <div className="absolute top-2.5 left-2.5">
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-medium shadow-xs">
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[10px] font-sans font-medium shadow-xs">
                                     <ImageIcon className="w-3 h-3 text-blue-300" />
                                     <span>{ext}</span>
                                   </span>
@@ -1038,7 +1043,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                                   <span className="font-semibold text-xs text-slate-900 dark:text-zinc-100 truncate block">
                                     {att.name}
                                   </span>
-                                  <span className="shrink-0 px-1.5 py-0.2 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-mono text-[9px] font-semibold uppercase">
+                                  <span className="shrink-0 px-1.5 py-0.2 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-sans text-[9px] font-semibold uppercase">
                                     {ext}
                                   </span>
                                 </div>
@@ -1271,7 +1276,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
                         {/* Card Top Row */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs text-slate-500 font-medium">{req.id}</span>
+                            <span className="font-sans text-xs text-slate-500 font-medium">{req.id}</span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
                               {req.subType}
                             </span>

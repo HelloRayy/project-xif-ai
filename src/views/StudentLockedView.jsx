@@ -63,7 +63,7 @@ export default function StudentLockedView({ currentUser, onLogout }) {
               </span>
               <div className="flex items-center gap-2 my-1">
                 <Clock className="w-4 h-4 text-primary" />
-                <span className="text-2xl font-mono font-bold tracking-tight text-foreground">
+                <span className="text-2xl font-sans font-bold tracking-tight text-foreground">
                   {formatTimeString(currentTime)} WIB
                 </span>
               </div>

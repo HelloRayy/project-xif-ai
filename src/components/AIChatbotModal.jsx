@@ -50,7 +50,7 @@ function renderFormattedText(text) {
           }
           if (part.startsWith('`') && part.endsWith('`')) {
             return (
-              <code key={pIdx} className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-zinc-800 font-mono text-[11px] text-blue-700 dark:text-blue-300">
+              <code key={pIdx} className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-zinc-800 font-sans text-[11px] text-blue-700 dark:text-blue-300">
                 {part.slice(1, -1)}
               </code>
             );

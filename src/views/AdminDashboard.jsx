@@ -40,6 +40,8 @@ import { Textarea } from '../components/ui/textarea';
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../components/ui/sheet';
+import { Switch } from '../components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -451,37 +453,39 @@ export default function AdminDashboard({ currentUser, activeTab }) {
               <span className="text-[10px] text-muted-foreground uppercase font-semibold">
                 {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
               </span>
-              <span className="font-mono text-xs font-bold text-foreground">
+              <span className="font-sans text-xs font-bold text-foreground">
                 {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
               </span>
             </div>
           </div>
 
-          {/* Emergency Lock Toggle */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-card shadow-2xs">
-            <div className="flex items-center gap-1.5 text-xs">
-              {isCurrentlyLocked ? (
-                <Lock className="w-4 h-4 text-amber-600 dark:text-amber-500" />
+          {/* Portal Siswa Access Toggle Switch */}
+          <div className="flex items-center gap-3 px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs">
+            <div className="flex items-center gap-2">
+              {!isCurrentlyLocked ? (
+                <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <Unlock className="w-3.5 h-3.5" />
+                </div>
               ) : (
-                <Unlock className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
+                <div className="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <Lock className="w-3.5 h-3.5" />
+                </div>
               )}
               <div className="flex flex-col">
                 <span className="text-[10px] text-muted-foreground uppercase font-semibold">Akses Portal Siswa</span>
-                <span className={cn("text-xs font-bold", isCurrentlyLocked ? "text-amber-600" : "text-emerald-600")}>
-                  {isCurrentlyLocked ? "Terkunci (07.30-15.30)" : "Terbuka"}
+                <span className={cn("text-xs font-bold", !isCurrentlyLocked ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")}>
+                  {!isCurrentlyLocked ? "Akses Terbuka" : "Akses Terkunci"}
                 </span>
               </div>
             </div>
 
-            <select
-              value={portalLockMode}
-              onChange={(e) => handleToggleLockMode(e.target.value)}
-              className="h-8 px-2 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-            >
-              <option value="AUTO">Otomatis (Jadwal Sekolah)</option>
-              <option value="FORCE_UNLOCK">Buka Paksa (Override Darurat / OSIS)</option>
-              <option value="FORCE_LOCKED">Kunci Paksa</option>
-            </select>
+            <Switch
+              checked={!isCurrentlyLocked}
+              onCheckedChange={(checked) => {
+                handleToggleLockMode(checked ? 'FORCE_UNLOCK' : 'FORCE_LOCKED');
+              }}
+              aria-label="Toggle Akses Portal Siswa"
+            />
           </div>
 
           <Button
@@ -575,42 +579,45 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 </div>
 
                 {/* Date Filter Dropdown */}
-                <div className="flex items-center gap-1">
-                  <select
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                    className="h-9 px-2.5 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-                  >
-                    <option value="ALL">Semua Tanggal</option>
-                    <option value="TODAY">Hari Ini</option>
-                    <option value="LAST_7_DAYS">7 Hari Terakhir</option>
-                    <option value="THIS_MONTH">Bulan Ini</option>
-                    <option value="CUSTOM">Pilih Tanggal...</option>
-                  </select>
+                <div className="flex items-center gap-1.5">
+                  <Select value={dateFilter} onValueChange={(val) => setDateFilter(val)}>
+                    <SelectTrigger className="h-9 w-[145px] text-xs font-medium">
+                      <SelectValue placeholder="Pilih Tanggal" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">Semua Tanggal</SelectItem>
+                      <SelectItem value="TODAY">Hari Ini</SelectItem>
+                      <SelectItem value="LAST_7_DAYS">7 Hari Terakhir</SelectItem>
+                      <SelectItem value="THIS_MONTH">Bulan Ini</SelectItem>
+                      <SelectItem value="CUSTOM">Pilih Tanggal...</SelectItem>
+                    </SelectContent>
+                  </Select>
 
                   {dateFilter === 'CUSTOM' && (
                     <input
                       type="date"
                       value={customDate}
                       onChange={(e) => setCustomDate(e.target.value)}
-                      className="h-9 px-2 text-xs bg-background border border-border rounded-xl font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="h-9 px-2 text-xs bg-background border border-border rounded-xl font-sans text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
                     />
                   )}
                 </div>
 
-                <select
-                  value={classFilter}
-                  onChange={(e) => setClassFilter(e.target.value)}
-                  className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-                >
-                  <option value="ALL">Semua Kelas</option>
-                  <option value="XI-A">Kelas XI-A</option>
-                  <option value="XI-B">Kelas XI-B</option>
-                  <option value="XI-C">Kelas XI-C</option>
-                  <option value="XI-D">Kelas XI-D</option>
-                  <option value="XI-E">Kelas XI-E</option>
-                  <option value="XI-F">Kelas XI-F</option>
-                </select>
+                {/* Class Filter Dropdown */}
+                <Select value={classFilter} onValueChange={(val) => setClassFilter(val)}>
+                  <SelectTrigger className="h-9 w-[130px] text-xs font-medium">
+                    <SelectValue placeholder="Pilih Kelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">Semua Kelas</SelectItem>
+                    <SelectItem value="XI-A">Kelas XI-A</SelectItem>
+                    <SelectItem value="XI-B">Kelas XI-B</SelectItem>
+                    <SelectItem value="XI-C">Kelas XI-C</SelectItem>
+                    <SelectItem value="XI-D">Kelas XI-D</SelectItem>
+                    <SelectItem value="XI-E">Kelas XI-E</SelectItem>
+                    <SelectItem value="XI-F">Kelas XI-F</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -699,7 +706,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                     filteredRequests.map((r) => (
                       <TableRow key={r.id} className="hover:bg-muted/40 transition-colors">
                         {/* ID */}
-                        <TableCell className="py-3.5 px-4 font-mono text-xs text-slate-600 dark:text-zinc-400 font-semibold whitespace-nowrap">
+                        <TableCell className="py-3.5 px-4 font-sans text-xs text-slate-600 dark:text-zinc-400 font-semibold whitespace-nowrap">
                           {r.id}
                         </TableCell>
 
@@ -803,7 +810,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-semibold text-blue-600 dark:text-blue-400">{r.id}</span>
+                          <span className="font-sans text-xs font-semibold text-blue-600 dark:text-blue-400">{r.id}</span>
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
                             {r.studentClass}
                           </span>
@@ -923,19 +930,20 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   className="pl-9 h-9 text-xs bg-background"
                 />
               </div>
-              <select
-                value={studentClassFilter}
-                onChange={(e) => setStudentClassFilter(e.target.value)}
-                className="h-9 px-3 text-xs bg-background border border-border rounded-xl font-medium text-slate-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-blue-600 shrink-0"
-              >
-                <option value="ALL">Semua Kelas ({students.length} Siswa)</option>
-                <option value="XI-A">Kelas XI-A</option>
-                <option value="XI-B">Kelas XI-B</option>
-                <option value="XI-C">Kelas XI-C</option>
-                <option value="XI-D">Kelas XI-D</option>
-                <option value="XI-E">Kelas XI-E</option>
-                <option value="XI-F">Kelas XI-F</option>
-              </select>
+              <Select value={studentClassFilter} onValueChange={(val) => setStudentClassFilter(val)}>
+                <SelectTrigger className="h-9 w-[190px] text-xs font-medium shrink-0">
+                  <SelectValue placeholder="Pilih Kelas" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">Semua Kelas ({students.length} Siswa)</SelectItem>
+                  <SelectItem value="XI-A">Kelas XI-A</SelectItem>
+                  <SelectItem value="XI-B">Kelas XI-B</SelectItem>
+                  <SelectItem value="XI-C">Kelas XI-C</SelectItem>
+                  <SelectItem value="XI-D">Kelas XI-D</SelectItem>
+                  <SelectItem value="XI-E">Kelas XI-E</SelectItem>
+                  <SelectItem value="XI-F">Kelas XI-F</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Desktop Table View */}
@@ -955,7 +963,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 <TableBody>
                   {displayedStudents.map((st, idx) => (
                     <TableRow key={st.id} className="hover:bg-muted/30">
-                      <TableCell className="text-center font-mono text-xs text-muted-foreground">
+                      <TableCell className="text-center font-sans text-xs text-muted-foreground">
                         {idx + 1}
                       </TableCell>
                       <TableCell>
@@ -1112,7 +1120,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[11px] text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded">
+                        <span className="font-sans text-[11px] text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded">
                           {doc.letterNumber || doc.id}
                         </span>
                         <span className="text-[10px] text-muted-foreground">{doc.uploadedAt}</span>
@@ -1245,7 +1253,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
               {/* Request Summary Card */}
               <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-900/60 border border-border space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-semibold text-purple-600 dark:text-purple-400">{selectedReqForTU.id}</span>
+                  <span className="font-sans text-xs font-semibold text-purple-600 dark:text-purple-400">{selectedReqForTU.id}</span>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-300">
                     {selectedReqForTU.subType}
                   </span>
@@ -1433,7 +1441,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
               {/* Title */}
               <div className="text-center space-y-0.5 pt-2">
                 <h4 className="text-sm font-bold uppercase underline tracking-wide text-slate-950">{viewingCertDoc.category || viewingCertDoc.title}</h4>
-                <p className="text-xs font-mono text-slate-700">Nomor: {viewingCertDoc.letterNumber || `421.3/SMAN6-TU/VIII/2026/01`}</p>
+                <p className="text-xs font-sans text-slate-700">Nomor: {viewingCertDoc.letterNumber || `421.3/SMAN6-TU/VIII/2026/01`}</p>
               </div>
 
               {/* Body */}
@@ -1519,31 +1527,39 @@ export default function AdminDashboard({ currentUser, activeTab }) {
 
             <div className="grid grid-cols-2 gap-2.5">
               <div className="space-y-1">
-                <label className="font-semibold text-slate-900 dark:text-zinc-100">Kelas</label>
-                <select
+                <label className="text-xs font-semibold text-slate-900 dark:text-zinc-100">Kelas</label>
+                <Select
                   value={studentForm.class}
-                  onChange={(e) => setStudentForm({ ...studentForm, class: e.target.value })}
-                  className="w-full h-9 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-slate-800 dark:text-zinc-200"
+                  onValueChange={(val) => setStudentForm({ ...studentForm, class: val })}
                 >
-                  <option value="XI-A">XI-A</option>
-                  <option value="XI-B">XI-B</option>
-                  <option value="XI-C">XI-C</option>
-                  <option value="XI-D">XI-D</option>
-                  <option value="XI-E">XI-E</option>
-                  <option value="XI-F">XI-F</option>
-                </select>
+                  <SelectTrigger className="w-full h-9 text-xs">
+                    <SelectValue placeholder="Pilih Kelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="XI-A">XI-A</SelectItem>
+                    <SelectItem value="XI-B">XI-B</SelectItem>
+                    <SelectItem value="XI-C">XI-C</SelectItem>
+                    <SelectItem value="XI-D">XI-D</SelectItem>
+                    <SelectItem value="XI-E">XI-E</SelectItem>
+                    <SelectItem value="XI-F">XI-F</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1">
-                <label className="font-semibold text-slate-900 dark:text-zinc-100">Jenis Kelamin</label>
-                <select
+                <label className="text-xs font-semibold text-slate-900 dark:text-zinc-100">Jenis Kelamin</label>
+                <Select
                   value={studentForm.gender}
-                  onChange={(e) => setStudentForm({ ...studentForm, gender: e.target.value })}
-                  className="w-full h-9 px-2.5 text-xs bg-background border border-border rounded-lg font-medium text-slate-800 dark:text-zinc-200"
+                  onValueChange={(val) => setStudentForm({ ...studentForm, gender: val })}
                 >
-                  <option value="Laki-laki">Laki-laki</option>
-                  <option value="Perempuan">Perempuan</option>
-                </select>
+                  <SelectTrigger className="w-full h-9 text-xs">
+                    <SelectValue placeholder="Pilih Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Laki-laki">Laki-laki</SelectItem>
+                    <SelectItem value="Perempuan">Perempuan</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

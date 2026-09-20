@@ -479,7 +479,7 @@ export function LoginForm({
                     setStudentNisn(e.target.value)
                     setErrorMsg("")
                   }}
-                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-sans disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
               <p className="text-[11px] text-muted-foreground pt-0.5">
@@ -558,7 +558,7 @@ export function LoginForm({
                   placeholder="Nomor Induk Pegawai (NIP)"
                   value={teacherNip}
                   onChange={(e) => setTeacherNip(e.target.value)}
-                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-sans"
                 />
               </div>
             </div>
@@ -640,7 +640,7 @@ export function LoginForm({
                   placeholder="NIP Guru BK"
                   value={adminNip}
                   onChange={(e) => setAdminNip(e.target.value)}
-                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-sans"
                 />
               </div>
             </div>
