@@ -68,7 +68,7 @@ export default function StudentLockedView({ currentUser, onLogout }) {
                 </span>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Portal ditutup: <strong>07.30 WIB</strong> • Buka kembali: <strong>16.30 WIB</strong>
+                Portal ditutup: <strong>07.30 WIB</strong> • Buka kembali: <strong>15.30 WIB</strong>
               </p>
             </div>
 
@@ -97,7 +97,7 @@ export default function StudentLockedView({ currentUser, onLogout }) {
             {/* Actions */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-border mt-1">
               <span className="text-[11px] text-muted-foreground text-center sm:text-left">
-                Halaman akan terbuka otomatis pada 16.30 WIB
+                Halaman akan terbuka otomatis pada 15.30 WIB
               </span>
               <Button
                 variant="outline"

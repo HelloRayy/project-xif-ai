@@ -112,7 +112,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
         ? 'Portal siswa berhasil dibuka paksa (Override Darurat). Siswa dapat mengajukan izin saat ini.' 
         : newMode === 'FORCE_LOCKED'
         ? 'Portal siswa berhasil dikunci secara manual.'
-        : 'Mode operasional portal siswa dikembalikan ke Jadwal Otomatis (07.30 - 16.30 WIB tertutup).',
+        : 'Mode operasional portal siswa dikembalikan ke Jadwal Otomatis (07.30 - 15.30 WIB tertutup).',
       'Mengerti'
     );
   };

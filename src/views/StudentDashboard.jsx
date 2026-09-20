@@ -528,7 +528,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
                   onClick={() => {
                     showAlert(
                       'Layanan Izin Ditutup Sementara',
-                      'Pengajuan permohonan surat izin baru ditutup sementara selama jam pelajaran sekolah aktif (07.30 - 16.30 WIB) atau saat dinonaktifkan oleh Guru BK. Anda tetap dapat memantau status permohonan yang telah diajukan dan mengunduh berkas surat yang telah terbit.',
+                      'Pengajuan permohonan surat izin baru ditutup sementara selama jam pelajaran sekolah aktif (07.30 - 15.30 WIB) atau saat dinonaktifkan oleh Guru BK. Anda tetap dapat memantau status permohonan yang telah diajukan dan mengunduh berkas surat yang telah terbit.',
                       'Mengerti'
                     );
                   }}
@@ -556,7 +556,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
               <div className="space-y-2 border-b border-border pb-5">
                 <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-200 text-xs font-semibold">
                   <Lock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-                  <span>Sistem Ditutup Sementara • Jam Pembelajaran Sekolah (07.30 — 16.30 WIB)</span>
+                  <span>Sistem Ditutup Sementara • Jam Pembelajaran Sekolah (07.30 — 15.30 WIB)</span>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-50">
                   Pemberitahuan Layanan Izin & Ketertiban Presensi Sekolah
@@ -572,7 +572,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
                     1. Ketentuan Jam Operasional Layanan Mandiri
                   </h3>
                   <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    Siswa hanya dapat mengajukan permohonan izin sakit atau dispensasi kegiatan secara mandiri sebelum pukul <strong>07.30 WIB</strong> di pagi hari, atau setelah pukul <strong>16.30 WIB</strong> di sore/malam hari. Hal ini bertujuan untuk memelihara fokus belajar dan memastikan seluruh siswa berada di kelas selama pembelajaran aktif.
+                    Siswa hanya dapat mengajukan permohonan izin sakit atau dispensasi kegiatan secara mandiri sebelum pukul <strong>07.30 WIB</strong> di pagi hari, atau setelah pukul <strong>15.30 WIB</strong> di sore/malam hari. Hal ini bertujuan untuk memelihara fokus belajar dan memastikan seluruh siswa berada di kelas selama pembelajaran aktif.
                   </p>
                 </div>
 
@@ -602,7 +602,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
 
               <div className="pt-4 border-t border-border text-xs text-muted-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <span>Pusat Layanan Kesiswaan & Bimbingan Konseling SMAN 6 Semarang</span>
-                <span className="font-semibold text-slate-800 dark:text-zinc-200">Sistem mandiri akan dibuka kembali pukul 16.30 WIB</span>
+                <span className="font-semibold text-slate-800 dark:text-zinc-200">Sistem mandiri akan dibuka kembali pukul 15.30 WIB</span>
               </div>
             </div>
           ) : (
@@ -718,7 +718,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
                   Layanan Pengajuan Ditutup Sementara
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Pengajuan surat izin mandiri siswa dinonaktifkan pada jam sekolah aktif (07.30 - 16.30 WIB) atau saat dikunci oleh Guru BK. Layanan akan dibuka kembali di luar jam KBM sekolah.
+                  Pengajuan surat izin mandiri siswa dinonaktifkan pada jam sekolah aktif (07.30 - 15.30 WIB) atau saat dikunci oleh Guru BK. Layanan akan dibuka kembali di luar jam KBM sekolah.
                 </p>
               </div>
               <div className="pt-2">
@@ -1375,7 +1375,7 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
               <div className="flex items-center gap-2.5 text-amber-900 dark:text-amber-200">
                 <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 <span className="text-xs">
-                  <strong>Status Layanan: Tutup Sementara</strong> — Pembuatan permohonan surat izin baru ditutup sementara selama jam KBM aktif (07.30 - 16.30 WIB). Pemantauan dan pelacakan status permohonan yang ada tetap dapat dilakukan secara normal.
+                  <strong>Status Layanan: Tutup Sementara</strong> — Pembuatan permohonan surat izin baru ditutup sementara selama jam KBM aktif (07.30 - 15.30 WIB). Pemantauan dan pelacakan status permohonan yang ada tetap dapat dilakukan secara normal.
                 </span>
               </div>
               <Badge variant="outline" className="border-amber-300 text-amber-700 dark:text-amber-400 shrink-0 self-start sm:self-auto">
