@@ -47,13 +47,12 @@ const ROLES = [
   },
   {
     value: "ADMIN",
-    label: "Staf Tata Usaha (TU) / Admin",
+    label: "Guru BK / Koordinator Konseling & TU",
     icon: Building2,
-    demoUser: "admin.tu"
   },
 ]
 
-const AVAILABLE_CLASSES = ["X-IPA 1", "X-IPA 2", "XI-IPS 1", "XI-IPS 2", "XII-IPA 1"]
+const AVAILABLE_CLASSES = ["XI-A", "XI-B", "XI-C", "XI-D", "XI-E", "XI-F"]
 
 export function RegisterForm({
   className,
@@ -65,19 +64,19 @@ export function RegisterForm({
   const [openClassCombobox, setOpenClassCombobox] = useState(false)
   const [selectedRole, setSelectedRole] = useState("STUDENT")
   const [name, setName] = useState("")
-  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const [selectedClass, setSelectedClass] = useState("X-IPA 1")
+  const [selectedClass, setSelectedClass] = useState("XI-A")
   
   const [errorMsg, setErrorMsg] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
+  const [registeredUser, setRegisteredUser] = useState(null)
 
   const handleRegister = (e) => {
     e.preventDefault()
     setErrorMsg("")
 
-    if (!name.trim() || !username.trim() || !password) {
+    if (!name.trim() || !password) {
       setErrorMsg("Mohon lengkapi seluruh formulir yang wajib diisi.")
       return
     }
@@ -87,33 +86,44 @@ export function RegisterForm({
       return
     }
 
+    const cleanName = name.trim()
+    const generatedUsername = cleanName
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, ".")
+      .replace(/\.+/g, ".")
+      .replace(/^\.|\.$/g, "")
+
     const users = getUsers()
     const isExisting = users.some(
-      u => u.username.toLowerCase() === username.toLowerCase().trim()
+      u => u.name?.toLowerCase().trim() === cleanName.toLowerCase() && u.role === selectedRole
     )
 
     if (isExisting) {
-      setErrorMsg(`Username "${username}" sudah terdaftar. Silakan gunakan username lain.`)
+      setErrorMsg(`Nama "${cleanName}" untuk peran ini sudah terdaftar. Silakan langsung login atau gunakan nama lain.`)
       return
     }
 
     const newUser = {
       id: `usr-${selectedRole.toLowerCase()}-${Date.now()}`,
-      username: username.toLowerCase().trim(),
+      username: generatedUsername || `user.${Date.now()}`,
       password: password,
-      name: name.trim(),
+      name: cleanName,
       role: selectedRole,
       roleLabel: selectedRole === 'ADMIN' 
-        ? 'Staf TU / Admin Utama' 
+        ? 'Guru BK / Koordinator Konseling & TU' 
         : selectedRole === 'TEACHER' 
           ? `Wali Kelas ${selectedClass}` 
           : `Siswa Kelas ${selectedClass}`,
       assignedClass: selectedRole === 'TEACHER' ? selectedClass : undefined,
       class: selectedRole === 'STUDENT' ? selectedClass : undefined,
-      email: `${username.toLowerCase().trim()}@schooladmin.sch.id`
+      nip: selectedRole !== 'STUDENT' ? '12345' : undefined,
+      nisn: selectedRole === 'STUDENT' ? `008${Math.floor(1000000 + Math.random() * 9000000)}` : undefined,
+      nis: selectedRole === 'STUDENT' ? `2026${Math.floor(100000 + Math.random() * 900000)}` : undefined,
+      status: 'Aktif'
     }
 
     saveUser(newUser)
+    setRegisteredUser(newUser)
     setIsSuccess(true)
     
     if (onRegisterSuccess) {
@@ -128,14 +138,14 @@ export function RegisterForm({
     return (
       <div className={cn("flex flex-col gap-6 text-center animate-in fade-in zoom-in-95 duration-200", className)} {...props}>
         <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/20 shadow-xs">
             <CheckCircle2 className="w-7 h-7" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Registrasi Berhasil!
           </h1>
           <p className="text-xs text-muted-foreground leading-relaxed max-w-xs mx-auto">
-            Akun Anda dengan username <strong className="text-foreground">{username}</strong> sebagai <strong className="text-foreground">{activeRole?.label}</strong> telah aktif dan siap digunakan.
+            Akun Anda atas nama <strong className="text-foreground">{registeredUser?.name}</strong> sebagai <strong className="text-foreground">{activeRole?.label}</strong> telah aktif dan siap digunakan.
           </p>
         </div>
 
@@ -261,54 +271,30 @@ export function RegisterForm({
           </div>
         </div>
 
-        {/* Username & Password Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          
-          {/* Username */}
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="reg-username" className="text-xs font-semibold text-foreground">
-              Username
-            </Label>
-            <div className="relative flex items-center">
-              <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
-              <Input
-                id="reg-username"
-                type="text"
-                placeholder="Contoh: rizky123"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
-              />
-            </div>
+        {/* Password */}
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="reg-password" className="text-xs font-semibold text-foreground">
+            Kata Sandi
+          </Label>
+          <div className="relative flex items-center">
+            <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
+            <Input
+              id="reg-password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Min. 6 karakter"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pl-9 pr-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4 opacity-70" /> : <Eye className="w-4 h-4 opacity-70" />}
+            </button>
           </div>
-
-          {/* Password */}
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="reg-password" className="text-xs font-semibold text-foreground">
-              Kata Sandi
-            </Label>
-            <div className="relative flex items-center">
-              <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
-              <Input
-                id="reg-password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Min. 6 karakter"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-9 pr-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4 opacity-70" /> : <Eye className="w-4 h-4 opacity-70" />}
-              </button>
-            </div>
-          </div>
-
         </div>
 
         {/* Dynamic Class Combobox based on Role */}
