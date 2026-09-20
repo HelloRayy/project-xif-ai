@@ -67,6 +67,7 @@ import {
   CommandSeparator
 } from '@/components/ui/command';
 import { getRequests, createRequest, cancelRequest, getDocuments } from '../services/storage';
+import { defaultTeachers } from '../data/initialData';
 
 const PERMIT_SERVICES = [
   {
@@ -404,14 +405,17 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
       timeFormatted = `${startIso} (1 Hari Penuh)`;
     }
 
+    const waliKelasObj = defaultTeachers.find(t => t.assignedClass === (currentUser.class || 'XI-A'));
+    const dynamicTeacherName = waliKelasObj ? waliKelasObj.name : 'Ahmad Dahlan, S.Pd.';
+
     const newReqData = {
       type: activeService.type,
       subType: activeService.label,
       studentId: currentUser.id,
       studentName: currentUser.name,
-      studentNis: currentUser.nis || '20261001',
-      studentClass: currentUser.class || 'X-IPA 1',
-      teacherName: 'Ahmad Dahlan, S.Pd.',
+      studentNis: currentUser.nis || '2026110101',
+      studentClass: currentUser.class || 'XI-A',
+      teacherName: dynamicTeacherName,
       purpose,
       startDate: startIso,
       endDate: endIso,
