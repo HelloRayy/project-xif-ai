@@ -29,6 +29,7 @@ import {
   X,
   FileCheck
 } from 'lucide-react';
+import PrintAttendanceModal from '../components/PrintAttendanceModal';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -94,6 +95,8 @@ export default function AdminDashboard({ currentUser, activeTab }) {
       return matchClass && matchSearch;
     });
   }, [students, studentClassFilter, studentSearchQuery]);
+
+  const [showAdminPrintModal, setShowAdminPrintModal] = useState(false);
 
   // TU Action Modal State
   const [selectedReqForTU, setSelectedReqForTU] = useState(null);
@@ -775,7 +778,17 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 </CardDescription>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAdminPrintModal(true)}
+                  className="h-8 px-3 text-xs font-medium border-blue-300 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 gap-1.5 shadow-2xs"
+                >
+                  <Printer className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  <span>Cetak Rekap Presensi (PDF)</span>
+                </Button>
+
                 <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-background border border-border hover:bg-muted text-slate-700 dark:text-zinc-300 rounded-lg text-xs font-medium cursor-pointer transition-colors shadow-2xs">
                   <Upload className="w-3.5 h-3.5 text-blue-600" />
                   <span>Impor Excel (.xlsx)</span>
@@ -1626,6 +1639,19 @@ export default function AdminDashboard({ currentUser, activeTab }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* =========================================================================
+          Official Print Attendance Preview Modal
+          ========================================================================= */}
+      <PrintAttendanceModal
+        open={showAdminPrintModal}
+        onOpenChange={setShowAdminPrintModal}
+        className={studentClassFilter === 'ALL' ? 'Semua Kelas (XI-A s/d XI-F)' : `Kelas ${studentClassFilter}`}
+        students={displayedStudents}
+        requests={requests}
+        teacherName={currentUser?.name || "Hj. Ratna Sari, S.E."}
+        teacherNip={currentUser?.nip || "19750618 200112 2 003"}
+      />
 
     </div>
   );

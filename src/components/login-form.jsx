@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,47 +20,46 @@ import {
 } from "@/components/ui/popover"
 import {
   Command,
+  CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
 import { 
   AlertCircle, 
   ArrowRight, 
-  Eye,
-  EyeOff,
   ChevronsUpDown,
   GraduationCap,
   UserCheck,
   Building2,
-  Lock,
   User,
-  Check
+  Check,
+  CheckCircle2,
+  Search,
+  IdCard
 } from "lucide-react"
 import { getUsers, setCurrentUser } from "@/services/storage"
-import { allInitialUsers } from "@/data/initialData"
+import { allInitialUsers, initialStudents, defaultTeachers, defaultAdmins } from "@/data/initialData"
 
 const ROLES = [
   {
     value: "STUDENT",
     label: "Siswa (Murid)",
+    subLabel: "Nama Lengkap & NISN",
     icon: GraduationCap,
-    demoUser: "siswa.aditiya.lukmanul",
-    demoPassword: "user123"
   },
   {
     value: "TEACHER",
     label: "Wali Kelas / Guru",
+    subLabel: "Nama Guru & NIP",
     icon: UserCheck,
-    demoUser: "guru.ahmad",
-    demoPassword: "password123"
   },
   {
     value: "ADMIN",
-    label: "Staf Tata Usaha (TU) / Admin",
+    label: "Guru BK / Staf TU",
+    subLabel: "Nama Petugas & NIP",
     icon: Building2,
-    demoUser: "admin.tu",
-    demoPassword: "password123"
   },
 ]
 
@@ -70,13 +69,60 @@ export function LoginForm({
   onSwitchToRegister,
   ...props
 }) {
-  const [open, setOpen] = useState(false)
-  const [selectedRole, setSelectedRole] = useState("")
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
+  const [openRole, setOpenRole] = useState(false)
+  const [selectedRole, setSelectedRole] = useState("STUDENT")
   const [errorMsg, setErrorMsg] = useState("")
-  const [showForgotDialog, setShowForgotDialog] = useState(false)
+  const [showInfoDialog, setShowInfoDialog] = useState(false)
+
+  // Siswa State
+  const [openStudentSearch, setOpenStudentSearch] = useState(false)
+  const [studentName, setStudentName] = useState("Aditiya Lukmanul Hakim")
+  const [studentNisn, setStudentNisn] = useState("0081101001")
+  const [detectedClass, setDetectedClass] = useState("XI-A")
+
+  // Guru State
+  const [teacherName, setTeacherName] = useState("Ahmad Dahlan, S.Pd.")
+  const [teacherNip, setTeacherNip] = useState("19790812 200501 1 004")
+
+  // BK / TU State
+  const [adminName, setAdminName] = useState("Hj. Ratna Sari, S.E.")
+  const [adminNip, setAdminNip] = useState("19750618 200112 2 003")
+
+  // All student options
+  const allStudents = useMemo(() => initialStudents || [], [])
+
+  const handleSelectStudent = (st) => {
+    setStudentName(st.name)
+    setStudentNisn(st.nisn)
+    setDetectedClass(st.class)
+    setOpenStudentSearch(false)
+    setErrorMsg("")
+  }
+
+  const handleStudentNameChange = (val) => {
+    setStudentName(val)
+    const match = allStudents.find(
+      s => s.name.toLowerCase().trim() === val.toLowerCase().trim()
+    )
+    if (match) {
+      setStudentNisn(match.nisn)
+      setDetectedClass(match.class)
+    } else {
+      setDetectedClass("")
+    }
+  }
+
+  const handleSelectTeacherPreset = (t) => {
+    setTeacherName(t.name)
+    setTeacherNip(t.nip || "")
+    setErrorMsg("")
+  }
+
+  const handleSelectAdminPreset = (a) => {
+    setAdminName(a.name)
+    setAdminNip(a.nip || "")
+    setErrorMsg("")
+  }
 
   const handleLogin = (e) => {
     e.preventDefault()
@@ -89,53 +135,94 @@ export function LoginForm({
 
     const storedUsers = getUsers()
     const users = (storedUsers && storedUsers.length > 0) ? storedUsers : allInitialUsers
-    const inputClean = username.toLowerCase().trim()
-    const passwordClean = password.trim()
+    let foundUser = null
 
-    const foundUser = users.find(u => {
-      if (u.role !== selectedRole) return false;
+    if (selectedRole === "STUDENT") {
+      const cleanName = studentName.toLowerCase().trim()
+      const cleanNisn = studentNisn.replace(/[^0-9]/g, "").trim()
 
-      const matchIdentifier = (
-        u.username?.toLowerCase() === inputClean ||
-        u.username?.toLowerCase() === `guru.${inputClean}` ||
-        u.username?.toLowerCase() === `siswa.${inputClean}` ||
-        u.username?.toLowerCase() === `admin.${inputClean}` ||
-        u.name?.toLowerCase() === inputClean ||
-        u.nis?.toLowerCase() === inputClean ||
-        u.email?.toLowerCase() === inputClean
-      );
+      if (!cleanName && !cleanNisn) {
+        setErrorMsg("Mohon masukkan Nama Lengkap atau NISN siswa.")
+        return
+      }
 
-      if (!matchIdentifier) return false;
+      // Find by exact/partial match
+      foundUser = users.find(u => {
+        if (u.role !== "STUDENT") return false
+        const uName = (u.name || "").toLowerCase().trim()
+        const uNisn = (u.nisn || "").replace(/[^0-9]/g, "")
+        const uNis = (u.nis || "").replace(/[^0-9]/g, "")
 
-      const matchPassword = (
-        u.password === passwordClean ||
-        (u.role === 'STUDENT' && passwordClean === 'user123') ||
-        ((u.role === 'TEACHER' || u.role === 'ADMIN') && passwordClean === 'password123')
-      );
+        const nameMatches = cleanName && (uName === cleanName || uName.includes(cleanName) || cleanName.includes(uName))
+        const nisnMatches = cleanNisn && (uNisn === cleanNisn || uNis === cleanNisn)
 
-      return matchPassword;
-    })
+        if (cleanName && cleanNisn) {
+          return nameMatches && (nisnMatches || !uNisn)
+        }
+        return nameMatches || nisnMatches
+      })
+
+      // Fallback: search in initialStudents and build user
+      if (!foundUser) {
+        const matchStudent = allStudents.find(s => {
+          const sName = s.name.toLowerCase().trim()
+          const sNisn = (s.nisn || "").replace(/[^0-9]/g, "")
+          return (cleanName && (sName === cleanName || sName.includes(cleanName))) || (cleanNisn && sNisn === cleanNisn)
+        })
+        if (matchStudent) {
+          foundUser = {
+            id: matchStudent.id,
+            username: matchStudent.username,
+            name: matchStudent.name,
+            role: "STUDENT",
+            roleLabel: `Siswa Kelas ${matchStudent.class}`,
+            nis: matchStudent.nis,
+            nisn: matchStudent.nisn,
+            class: matchStudent.class,
+            gender: matchStudent.gender,
+            guardianName: matchStudent.guardianName,
+            guardianPhone: matchStudent.guardianPhone,
+            email: matchStudent.email,
+            phone: matchStudent.phone,
+            status: "Aktif"
+          }
+        }
+      }
+    } else if (selectedRole === "TEACHER") {
+      const cleanName = teacherName.toLowerCase().trim()
+      const cleanNip = teacherNip.replace(/[^0-9]/g, "").trim()
+
+      foundUser = users.find(u => {
+        if (u.role !== "TEACHER") return false
+        const uName = (u.name || "").toLowerCase()
+        const uNip = (u.nip || "").replace(/[^0-9]/g, "")
+        const matchName = !cleanName || uName.includes(cleanName) || cleanName.includes(uName)
+        const matchNip = !cleanNip || uNip.includes(cleanNip)
+        return matchName && matchNip
+      })
+    } else if (selectedRole === "ADMIN") {
+      const cleanName = adminName.toLowerCase().trim()
+      const cleanNip = adminNip.replace(/[^0-9]/g, "").trim()
+
+      foundUser = users.find(u => {
+        if (u.role !== "ADMIN") return false
+        const uName = (u.name || "").toLowerCase()
+        const uNip = (u.nip || "").replace(/[^0-9]/g, "")
+        const matchName = !cleanName || uName.includes(cleanName) || cleanName.includes(uName)
+        const matchNip = !cleanNip || uNip.includes(cleanNip)
+        return matchName && matchNip
+      })
+    }
 
     if (foundUser) {
       setCurrentUser(foundUser)
       onLoginSuccess(foundUser)
     } else {
-      setErrorMsg("Username, password, atau peran yang dipilih tidak sesuai.")
-    }
-  }
-
-  const handleSelectRole = (currentValue) => {
-    const nextRole = currentValue === selectedRole ? "" : currentValue
-    setSelectedRole(nextRole)
-    setOpen(false)
-    setErrorMsg("")
-    const r = ROLES.find(item => item.value === nextRole)
-    if (r) {
-      setUsername(r.demoUser)
-      setPassword(r.demoPassword || "user123")
-    } else {
-      setUsername("")
-      setPassword("")
+      if (selectedRole === "STUDENT") {
+        setErrorMsg("Data siswa tidak ditemukan. Pilih nama dari saran atau periksa ejaan NISN.")
+      } else {
+        setErrorMsg("Identitas Nama atau NIP tidak ditemukan pada database sekolah.")
+      }
     }
   }
 
@@ -143,44 +230,51 @@ export function LoginForm({
   const ActiveRoleIcon = activeRole ? activeRole.icon : User
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-5", className)} {...props}>
       
       {/* Header Section */}
-      <div className="flex flex-col gap-1.5 text-left sm:text-center">
+      <div className="flex flex-col gap-1 text-left sm:text-center">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Masuk ke Akun Anda
+          Portal Administrasi Siswa
         </h1>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          {selectedRole 
-            ? `Masukkan kredensial akun untuk ${activeRole?.label}` 
-            : 'Pilih peran akun Anda untuk memulai proses login'}
+          Autentikasi resmi tanpa password • Identitas Nama & NISN / NIP
         </p>
       </div>
 
       {/* Main Form Container */}
       <form onSubmit={handleLogin} className="flex flex-col gap-4">
         
-        {/* Basic Shadcn Combobox with SVG Icons */}
+        {/* Role Selector Combobox */}
         <div className="flex flex-col gap-1.5">
-          <Label className="text-xs font-semibold text-foreground">
-            Masuk Sebagai (Peran)
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-semibold text-foreground">
+              Masuk Sebagai (Peran)
+            </Label>
+            <button
+              type="button"
+              onClick={() => setShowInfoDialog(true)}
+              className="text-[11px] text-muted-foreground hover:text-primary transition-colors"
+            >
+              Panduan Login?
+            </button>
+          </div>
 
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover open={openRole} onOpenChange={setOpenRole}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 role="combobox"
-                aria-expanded={open}
-                className={cn(
-                  "w-full justify-between h-10 px-3 text-xs font-medium bg-background transition-colors hover:bg-muted/40",
-                  selectedRole && "border-primary/40 ring-1 ring-primary/10"
-                )}
+                aria-expanded={openRole}
+                className="w-full justify-between h-10 px-3 text-xs font-medium bg-background border-primary/40 ring-1 ring-primary/10 hover:bg-muted/40"
               >
                 <div className="flex items-center gap-2.5 truncate">
-                  <ActiveRoleIcon className={cn("w-4 h-4 shrink-0 transition-colors", selectedRole ? "text-primary" : "text-muted-foreground/60")} />
-                  <span className={cn("truncate", !selectedRole ? "text-muted-foreground" : "text-foreground font-semibold")}>
-                    {selectedRole ? activeRole?.label : "Pilih peran akun..."}
+                  <ActiveRoleIcon className="w-4 h-4 shrink-0 text-primary" />
+                  <span className="truncate text-foreground font-semibold">
+                    {activeRole?.label}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                    ({activeRole?.subLabel})
                   </span>
                 </div>
                 <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
@@ -197,17 +291,22 @@ export function LoginForm({
                         <CommandItem
                           key={role.value}
                           value={role.label}
-                          onSelect={() => handleSelectRole(role.value)}
+                          onSelect={() => {
+                            setSelectedRole(role.value)
+                            setOpenRole(false)
+                            setErrorMsg("")
+                          }}
                           className={cn(
-                            "text-xs cursor-pointer py-2.5 px-3 flex items-center justify-between rounded-md group transition-colors",
+                            "text-xs cursor-pointer py-2 px-3 flex items-center justify-between rounded-md group transition-colors",
                             isSelected ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent hover:text-accent-foreground"
                           )}
                         >
                           <div className="flex items-center gap-2.5">
-                            <RoleIcon className={cn("w-4 h-4 shrink-0 transition-colors", isSelected ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
-                            <span>
-                              {role.label}
-                            </span>
+                            <RoleIcon className={cn("w-4 h-4 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
+                            <div className="flex flex-col">
+                              <span>{role.label}</span>
+                              <span className="text-[10px] text-muted-foreground font-normal">{role.subLabel}</span>
+                            </div>
                           </div>
                           <Check
                             className={cn(
@@ -233,106 +332,314 @@ export function LoginForm({
           </Alert>
         )}
 
-        {/* Dynamic Fields - Appears once role is selected */}
-        {selectedRole && (
-          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+        {/* ====================================================================
+            ROLE: SISWA (NAMA LENGKAP + NISN, OTOMATIS MASUK KELAS)
+            ==================================================================== */}
+        {selectedRole === "STUDENT" && (
+          <div className="flex flex-col gap-3.5 bg-muted/20 p-3.5 rounded-xl border border-border">
             
-            {/* Username Field */}
+            {/* Nama Siswa dengan Autocomplete Search Popover */}
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="username" className="text-xs font-semibold text-foreground">
-                Username
+              <div className="flex items-center justify-between">
+                <Label htmlFor="student-name" className="text-xs font-semibold text-foreground">
+                  Nama Lengkap Siswa
+                </Label>
+                <span className="text-[10px] text-muted-foreground">
+                  Total 216 Siswa (XI-A s/d XI-F)
+                </span>
+              </div>
+
+              <Popover open={openStudentSearch} onOpenChange={setOpenStudentSearch}>
+                <PopoverTrigger asChild>
+                  <div className="relative flex items-center cursor-pointer">
+                    <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
+                    <Input
+                      id="student-name"
+                      type="text"
+                      placeholder="Ketik atau cari nama siswa..."
+                      value={studentName}
+                      onChange={(e) => handleStudentNameChange(e.target.value)}
+                      className="pl-9 pr-8 h-10 text-xs shadow-xs focus-visible:ring-primary"
+                    />
+                    <Search className="w-3.5 h-3.5 text-muted-foreground absolute right-3 pointer-events-none opacity-50" />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Cari dari 216 nama siswa..." className="h-9 text-xs" />
+                    <CommandList className="max-h-56">
+                      <CommandEmpty className="text-xs py-3 text-center text-muted-foreground">
+                        Siswa tidak ditemukan.
+                      </CommandEmpty>
+                      <CommandGroup heading="Daftar Siswa Sekolah">
+                        {allStudents.slice(0, 40).map((st) => (
+                          <CommandItem
+                            key={st.id}
+                            value={`${st.name} ${st.class} ${st.nisn}`}
+                            onSelect={() => handleSelectStudent(st)}
+                            className="text-xs py-2 px-3 flex items-center justify-between cursor-pointer"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium text-foreground">{st.name}</span>
+                              <span className="text-[10px] text-muted-foreground">NISN: {st.nisn}</span>
+                            </div>
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                              {st.class}
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* NISN Siswa (Auto-filled or manual) */}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="student-nisn" className="text-xs font-semibold text-foreground">
+                Nomor Induk Siswa Nasional (NISN)
               </Label>
               <div className="relative flex items-center">
-                <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
+                <IdCard className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
-                  id="username"
+                  id="student-nisn"
                   type="text"
-                  placeholder={selectedRole === 'STUDENT' ? 'Username / Nama Siswa / NIS' : activeRole?.demoUser ? `Contoh: ${activeRole.demoUser}` : 'Masukkan username'}
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Contoh: 0081101001 (10 Digit)"
+                  value={studentNisn}
+                  onChange={(e) => setStudentNisn(e.target.value)}
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Auto-detected Class Notification Banner */}
+            {detectedClass && (
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <div className="text-[11px] leading-tight">
+                  Siswa terdaftar di <strong>Kelas {detectedClass}</strong>. Langsung terhubung ke dashboard kelas tanpa pilih manual.
+                </div>
+              </div>
+            )}
+
+            {/* Quick Demo Student Pills */}
+            <div className="pt-1">
+              <span className="text-[10px] font-medium text-muted-foreground block mb-1.5">
+                Cepat Pilih Contoh Siswa Demo:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { name: "Aditiya Lukmanul Hakim", nisn: "0081101001", class: "XI-A" },
+                  { name: "Afifah Nurul Hikmah", nisn: "0081102001", class: "XI-B" },
+                  { name: "Adyttia Churniawan", nisn: "0081103001", class: "XI-C" },
+                  { name: "Aaliya Syahquita Putri", nisn: "0081104001", class: "XI-D" }
+                ].map((sample, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => {
+                      setStudentName(sample.name)
+                      setStudentNisn(sample.nisn)
+                      setDetectedClass(sample.class)
+                      setErrorMsg("")
+                    }}
+                    className="text-[10px] px-2 py-1 rounded-md bg-background border border-border hover:border-primary text-slate-700 dark:text-zinc-300 font-medium transition-colors"
+                  >
+                    {sample.class}: {sample.name.split(" ")[0]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ====================================================================
+            ROLE: GURU (WALI KELAS / GURU: NAMA & NIP)
+            ==================================================================== */}
+        {selectedRole === "TEACHER" && (
+          <div className="flex flex-col gap-3.5 bg-muted/20 p-3.5 rounded-xl border border-border">
+            
+            {/* Quick Preset Selector for Teachers */}
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs font-semibold text-foreground">
+                Pilih Wali Kelas (XI-A s/d XI-F)
+              </Label>
+              <div className="grid grid-cols-2 gap-1.5">
+                {defaultTeachers.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => handleSelectTeacherPreset(t)}
+                    className={cn(
+                      "text-left p-2 rounded-lg border text-xs transition-colors",
+                      teacherName === t.name 
+                        ? "bg-primary/10 border-primary text-primary font-semibold"
+                        : "bg-background border-border hover:bg-muted text-slate-700 dark:text-zinc-300"
+                    )}
+                  >
+                    <div className="font-medium truncate">{t.name}</div>
+                    <div className="text-[10px] text-muted-foreground">{t.roleLabel}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Nama Guru Input */}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="teacher-name" className="text-xs font-semibold text-foreground">
+                Nama Lengkap Guru
+              </Label>
+              <div className="relative flex items-center">
+                <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
+                <Input
+                  id="teacher-name"
+                  type="text"
+                  placeholder="Contoh: Ahmad Dahlan, S.Pd."
+                  value={teacherName}
+                  onChange={(e) => setTeacherName(e.target.value)}
                   className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
                 />
               </div>
             </div>
 
-            {/* Password Field with Show/Hide Toggle */}
+            {/* NIP Guru Input */}
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold text-foreground">
-                  Password
-                </Label>
-                <button
-                  type="button"
-                  onClick={() => setShowForgotDialog(true)}
-                  className="text-[11px] text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Lupa password?
-                </button>
-              </div>
+              <Label htmlFor="teacher-nip" className="text-xs font-semibold text-foreground">
+                Nomor Induk Pegawai (NIP)
+              </Label>
               <div className="relative flex items-center">
-                <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
+                <IdCard className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-9 pr-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
+                  id="teacher-nip"
+                  type="text"
+                  placeholder="Contoh: 19790812 200501 1 004"
+                  value={teacherNip}
+                  onChange={(e) => setTeacherNip(e.target.value)}
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4 opacity-70" /> : <Eye className="w-4 h-4 opacity-70" />}
-                </button>
               </div>
             </div>
 
-            {/* Primary Submit Button */}
-            <Button
-              type="submit"
-              className="w-full h-10 gap-2 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 transition-all active:scale-[0.98] mt-1"
-            >
-              <span>Masuk ke Portal</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
           </div>
         )}
 
-        {/* Dedicated Single Page Registration Link */}
+        {/* ====================================================================
+            ROLE: GURU BK / STAF TU (NAMA & NIP)
+            ==================================================================== */}
+        {selectedRole === "ADMIN" && (
+          <div className="flex flex-col gap-3.5 bg-muted/20 p-3.5 rounded-xl border border-border">
+            
+            {/* Quick Preset Selector for Admin */}
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-xs font-semibold text-foreground">
+                Petugas Bimbingan Konseling (BK) & TU
+              </Label>
+              <div className="flex flex-col gap-1.5">
+                {defaultAdmins.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => handleSelectAdminPreset(a)}
+                    className={cn(
+                      "text-left p-2.5 rounded-lg border text-xs transition-colors",
+                      adminName === a.name 
+                        ? "bg-primary/10 border-primary text-primary font-semibold"
+                        : "bg-background border-border hover:bg-muted text-slate-700 dark:text-zinc-300"
+                    )}
+                  >
+                    <div className="font-semibold">{a.name}</div>
+                    <div className="text-[10px] text-muted-foreground">{a.roleLabel} • NIP: {a.nip}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Nama Petugas Input */}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="admin-name" className="text-xs font-semibold text-foreground">
+                Nama Petugas BK / TU
+              </Label>
+              <div className="relative flex items-center">
+                <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
+                <Input
+                  id="admin-name"
+                  type="text"
+                  placeholder="Contoh: Hj. Ratna Sari, S.E."
+                  value={adminName}
+                  onChange={(e) => setAdminName(e.target.value)}
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
+                />
+              </div>
+            </div>
+
+            {/* NIP Petugas Input */}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="admin-nip" className="text-xs font-semibold text-foreground">
+                Nomor Induk Pegawai (NIP)
+              </Label>
+              <div className="relative flex items-center">
+                <IdCard className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
+                <Input
+                  id="admin-nip"
+                  type="text"
+                  placeholder="Contoh: 19750618 200112 2 003"
+                  value={adminNip}
+                  onChange={(e) => setAdminNip(e.target.value)}
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"
+                />
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* Primary Submit Button */}
+        <Button
+          type="submit"
+          className="w-full h-10 gap-2 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 transition-all active:scale-[0.98] mt-1"
+        >
+          <span>Masuk ke Portal {activeRole?.label}</span>
+          <ArrowRight className="w-4 h-4" />
+        </Button>
+
+        {/* Registration Link */}
         <div className="text-center text-xs text-muted-foreground pt-1">
-          Belum memiliki akun?{" "}
+          Belum terdaftar di database?{" "}
           <button
             type="button"
             onClick={onSwitchToRegister}
             className="font-semibold text-primary hover:underline transition-colors ml-1"
           >
-            Registrasi Akun Baru
+            Registrasi Siswa Baru
           </button>
         </div>
 
       </form>
 
-      {/* Forgot Password Information Alert Dialog */}
-      <AlertDialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
+      {/* Login Information Alert Dialog */}
+      <AlertDialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="text-base font-semibold text-slate-900 dark:text-zinc-50">
-              Informasi Kredensial Demo
+              Sistem Autentikasi Tanpa Password
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs text-slate-600 dark:text-zinc-400">
-              Password default seluruh akun Siswa (XI-A s/d XI-F) adalah: <strong className="text-foreground font-mono">user123</strong> (dapat masuk menggunakan Username, Nama Siswa, atau NIS).
-              <br /><br />
-              Untuk akun Staf TU (<span className="font-mono">admin.tu</span>) dan Wali Kelas (<span className="font-mono">guru.ahmad</span>, dll): <strong className="text-foreground font-mono">password123</strong>.
+            <AlertDialogDescription className="text-xs text-slate-600 dark:text-zinc-400 space-y-2">
+              <p>
+                Sistem ini tidak menggunakan password untuk memudahkan siswa dan guru:
+              </p>
+              <ul className="list-disc pl-4 space-y-1">
+                <li><strong>Siswa</strong>: Masuk menggunakan <em>Nama Lengkap</em> & <em>NISN</em>. Kelas akan otomatis terdeteksi.</li>
+                <li><strong>Guru (Wali Kelas)</strong>: Masuk menggunakan <em>Nama Lengkap</em> & <em>NIP</em>.</li>
+                <li><strong>Guru BK / TU</strong>: Masuk menggunakan <em>Nama Petugas</em> & <em>NIP</em>.</li>
+              </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
               className="h-9 px-4 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => setShowForgotDialog(false)}
+              onClick={() => setShowInfoDialog(false)}
             >
               Mengerti
             </AlertDialogAction>

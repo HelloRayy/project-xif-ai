@@ -22,8 +22,10 @@ import {
   ShieldCheck,
   Clock,
   ChevronRight,
-  Maximize2
+  Maximize2,
+  Printer
 } from 'lucide-react';
+import PrintAttendanceModal from '../components/PrintAttendanceModal';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -90,6 +92,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
 
   const [selectedClass, setSelectedClass] = useState(currentUser?.assignedClass || 'XI-A');
   const teacherClass = selectedClass;
+  const [showPrintModal, setShowPrintModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -447,15 +450,27 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
               </p>
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExportExcel}
-              className="gap-2 text-xs font-medium h-9 border-slate-300 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800 shrink-0"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Ekspor Rekap Presensi (Excel)</span>
-            </Button>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPrintModal(true)}
+                className="gap-2 text-xs font-medium h-9 border-blue-300 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 shadow-2xs"
+              >
+                <Printer className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span>Cetak Rekap Presensi (PDF)</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportExcel}
+                className="gap-2 text-xs font-medium h-9 border-emerald-300 dark:border-emerald-900 bg-emerald-50/60 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 shadow-2xs"
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Ekspor Excel (.xlsx)</span>
+              </Button>
+            </div>
           </div>
 
           {/* 1. KPI Summary Cards (Clean & Accessible Inter Sans) */}
@@ -1335,6 +1350,19 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* =========================================================================
+          Official Print Attendance Preview Modal
+          ========================================================================= */}
+      <PrintAttendanceModal
+        open={showPrintModal}
+        onOpenChange={setShowPrintModal}
+        className={teacherClass}
+        students={students}
+        requests={requests}
+        teacherName={currentUser?.name || "Wali Kelas"}
+        teacherNip={currentUser?.nip || "19790812 200501 1 004"}
+      />
 
     </div>
   );
