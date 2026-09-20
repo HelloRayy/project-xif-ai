@@ -81,10 +81,11 @@ export function LoginForm({
   const [errorMsg, setErrorMsg] = useState("")
   const [showInfoDialog, setShowInfoDialog] = useState(false)
 
-  // Siswa Form State: Kelas -> Nama Lengkap -> NISN (Input sendiri tanpa suggestion)
+  // Siswa Form State: Kelas -> Nama Lengkap (Combobox/Dropdown with filter by class) -> NISN
   const [studentClass, setStudentClass] = useState("")
   const [studentName, setStudentName] = useState("")
   const [studentNisn, setStudentNisn] = useState("")
+  const [openStudentCombobox, setOpenStudentCombobox] = useState(false)
 
   // Guru Form State
   const [teacherName, setTeacherName] = useState("")
@@ -362,6 +363,7 @@ export function LoginForm({
                 value={studentClass}
                 onValueChange={(val) => {
                   setStudentClass(val)
+                  setStudentName("")
                   setErrorMsg("")
                 }}
               >
@@ -379,46 +381,86 @@ export function LoginForm({
               </Select>
             </div>
 
-            {/* 2. Input Nama Lengkap Siswa (Manual tanpa suggestion) */}
+            {/* 2. Nama Lengkap Siswa (Dropdown/Combobox yang hanya memunculkan siswa di kelas terpilih) */}
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="student-name-input" className="text-xs font-semibold text-foreground">
+                <Label htmlFor="student-name-combobox" className="text-xs font-semibold text-foreground">
                   2. Nama Lengkap Siswa
                 </Label>
                 {studentClass && (
                   <span className="text-[10px] text-muted-foreground">
-                    Siswa terdaftar di {studentClass}
+                    {classStudents.length} siswa terdaftar di {studentClass}
                   </span>
                 )}
               </div>
-              <div className="relative flex items-center">
-                <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
-                <Input
-                  id="student-name-input"
-                  type="text"
-                  autoComplete="off"
-                  placeholder={studentClass ? `Ketik nama lengkap siswa di kelas ${studentClass}...` : "Pilih kelas terlebih dahulu..."}
-                  disabled={!studentClass}
-                  value={studentName}
-                  onChange={(e) => {
-                    setStudentName(e.target.value)
-                    setErrorMsg("")
-                  }}
-                  className="pl-9 pr-8 h-10 text-xs shadow-xs focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                />
-                {studentName && (
-                  <button
+
+              <Popover open={openStudentCombobox} onOpenChange={setOpenStudentCombobox}>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="student-name-combobox"
                     type="button"
-                    onClick={() => setStudentName("")}
-                    className="absolute right-2.5 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors"
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openStudentCombobox}
+                    disabled={!studentClass}
+                    className="w-full justify-between h-10 px-3 text-xs font-normal bg-background border-border hover:bg-muted/40 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
+                    <div className="flex items-center gap-2.5 truncate">
+                      <User className="w-4 h-4 shrink-0 text-muted-foreground opacity-70" />
+                      <span className={cn("truncate", studentName ? "text-foreground font-medium" : "text-muted-foreground")}>
+                        {studentName || (!studentClass ? "Pilih kelas terlebih dahulu..." : `-- Pilih atau cari nama di ${studentClass} --`)}
+                      </span>
+                    </div>
+                    <ChevronsUpDown className="opacity-50 ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <Command>
+                    <CommandInput 
+                      placeholder={`Cari nama siswa di ${studentClass}...`} 
+                      className="h-9 text-xs" 
+                    />
+                    <CommandList className="max-h-[220px] overflow-y-auto">
+                      <CommandEmpty className="py-4 text-center text-xs text-muted-foreground">
+                        Nama tidak ditemukan di kelas {studentClass}.
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {classStudents.map((student) => {
+                          const isSelected = (studentName || "").toLowerCase().trim() === student.name.toLowerCase().trim()
+                          return (
+                            <CommandItem
+                              key={student.id || student.nisn || student.name}
+                              value={student.name}
+                              onSelect={() => {
+                                setStudentName(student.name)
+                                setOpenStudentCombobox(false)
+                                setErrorMsg("")
+                              }}
+                              className={cn(
+                                "text-xs cursor-pointer py-2 px-3 flex items-center justify-between rounded-md transition-colors",
+                                isSelected ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent hover:text-accent-foreground"
+                              )}
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <span className="truncate">{student.name}</span>
+                              </div>
+                              <Check
+                                className={cn(
+                                  "ml-auto h-3.5 w-3.5 text-primary shrink-0",
+                                  isSelected ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          )
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
-            {/* 3. Input NISN Siswa (Input sendiri manual tanpa suggestion) */}
+            {/* 3. Input NISN Siswa */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="student-nisn-input" className="text-xs font-semibold text-foreground">
                 3. Nomor Induk Siswa Nasional (NISN)
