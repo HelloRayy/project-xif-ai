@@ -340,14 +340,16 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Real-time WIB Clock Widget */}
-              <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-2.5">
-                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+              {/* Real-time WIB Clock Widget - Borderless & Larger */}
+              <div className="flex items-center gap-3 px-2 py-1">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5" />
+                </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                  <span className="text-xs font-semibold text-muted-foreground leading-tight">
                     {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
                   </span>
-                  <span className="font-sans text-xs font-bold text-foreground">
+                  <span className="font-sans text-sm sm:text-base font-bold text-foreground leading-tight tracking-tight">
                     {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
                   </span>
                 </div>

@@ -25,7 +25,8 @@ import {
   ImageIcon,
   Eye,
   ShieldCheck,
-  Maximize2
+  Maximize2,
+  Lock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -178,7 +179,7 @@ function formatIndoDate(date) {
   return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-export default function StudentDashboard({ currentUser, activeTab, setActiveTab }) {
+export default function StudentDashboard({ currentUser, activeTab, setActiveTab, isLocked = false }) {
   const [requests, setRequests] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [selectedReqDetail, setSelectedReqDetail] = useState(null);
@@ -533,29 +534,70 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Real-time WIB Clock Widget */}
-              <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-2.5">
-                <Clock className="w-4 h-4 text-primary shrink-0" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+              {/* Real-time WIB Clock Widget - Borderless & Larger */}
+              <div className="flex items-center gap-3 px-2 py-1">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-xs font-semibold text-muted-foreground leading-tight">
                     {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
                   </span>
-                  <span className="font-sans text-xs font-bold text-foreground">
+                  <span className="font-sans text-sm sm:text-base font-bold text-foreground leading-tight tracking-tight">
                     {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
                   </span>
                 </div>
               </div>
 
-              <Button
-                variant="default"
-                onClick={() => setActiveTab('NEW_REQUEST')}
-                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm shadow-sm rounded-lg px-4 h-10"
-              >
-                <FilePlus className="w-4 h-4" />
-                <span>Buat Pengajuan Baru</span>
-              </Button>
+              {isLocked ? (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    showAlert(
+                      'Layanan Izin Ditutup Sementara',
+                      'Pengajuan permohonan surat izin baru ditutup sementara selama jam pelajaran sekolah aktif (07.30 - 15.30 WIB) atau saat dinonaktifkan oleh Guru BK. Anda tetap dapat memantau status permohonan yang telah diajukan dan mengunduh berkas surat yang telah terbit.',
+                      'Mengerti'
+                    );
+                  }}
+                  className="gap-2 border-amber-300 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 hover:bg-amber-100 font-medium text-xs sm:text-sm rounded-lg px-4 h-10 cursor-pointer shadow-2xs"
+                >
+                  <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>Layanan Ditutup Sementara</span>
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  onClick={() => setActiveTab('NEW_REQUEST')}
+                  className="gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm shadow-sm rounded-lg px-4 h-10"
+                >
+                  <FilePlus className="w-4 h-4" />
+                  <span>Buat Pengajuan Baru</span>
+                </Button>
+              )}
             </div>
           </div>
+
+          {/* Jam Operasional / Tutup Sementara Notification Banner */}
+          {isLocked && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-amber-200/90 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 shadow-2xs">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs sm:text-sm font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-2">
+                    Jam Pelajaran Sekolah Aktif — Layanan Izin Ditutup Sementara
+                  </h4>
+                  <p className="text-xs text-amber-800/90 dark:text-amber-300/80 mt-0.5">
+                    Sesuai tata tertib sekolah, pengajuan surat izin baru dinonaktifkan pada pukul 07.30 - 15.30 WIB. Seluruh riwayat pengajuan dan status surat tetap dapat dipantau di bawah ini.
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-amber-200/70 dark:bg-amber-900/80 text-amber-800 dark:text-amber-200 self-start sm:self-center shrink-0">
+                07.30 — 15.30 WIB
+              </span>
+            </div>
+          )}
 
           {/* Metric Stats Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -637,6 +679,21 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
               )}
             </CardContent>
           </Card>
+
+          {/* Info Tutup Sementara di bagian bawah tabel / list */}
+          {isLocked && (
+            <div className="p-4 rounded-xl border border-dashed border-amber-300 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2.5 text-amber-900 dark:text-amber-200">
+                <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span className="text-xs">
+                  <strong>Status Layanan: Tutup Sementara</strong> — Pembuatan pengajuan izin baru dinonaktifkan selama jam belajar aktif (07.30 - 15.30 WIB). Untuk keperluan izin mendesak, silakan lapor langsung ke Guru BK atau Wali Kelas.
+                </span>
+              </div>
+              <Badge variant="outline" className="border-amber-300 text-amber-700 dark:text-amber-400 shrink-0 self-start sm:self-auto">
+                Tutup Sementara
+              </Badge>
+            </div>
+          )}
         </div>
       )}
 
@@ -656,16 +713,42 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
             </p>
           </div>
 
-          {/* Success Alert Banner */}
-          {formSuccessMsg && (
-            <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl text-emerald-900 dark:text-emerald-200 text-sm font-medium flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span>{formSuccessMsg}</span>
+          {isLocked ? (
+            <div className="p-8 sm:p-12 rounded-2xl border border-amber-200 dark:border-amber-900/60 bg-card text-center space-y-4 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+                <Lock className="w-7 h-7" />
+              </div>
+              <div className="space-y-1.5 max-w-md mx-auto">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground">
+                  Layanan Pengajuan Ditutup Sementara
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Pengajuan surat izin mandiri siswa dinonaktifkan pada jam sekolah aktif (07.30 - 15.30 WIB) atau saat dikunci oleh Guru BK. Layanan akan dibuka kembali di luar jam KBM sekolah.
+                </p>
+              </div>
+              <div className="pt-2">
+                <Button 
+                  onClick={() => setActiveTab('OVERVIEW')} 
+                  variant="outline"
+                  className="rounded-xl text-xs gap-2"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+                  <span>Kembali ke Ringkasan Dashboard</span>
+                </Button>
+              </div>
             </div>
-          )}
+          ) : (
+            <>
+              {/* Success Alert Banner */}
+              {formSuccessMsg && (
+                <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl text-emerald-900 dark:text-emerald-200 text-sm font-medium flex items-center gap-2.5">
+                  <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <span>{formSuccessMsg}</span>
+                </div>
+              )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmitRequest} className="space-y-6">
+              {/* Form */}
+              <form onSubmit={handleSubmitRequest} className="space-y-6">
             
             {/* 1. Jenis Izin Combobox */}
             <div className="space-y-2">
@@ -1153,7 +1236,9 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
               </Button>
             </div>
 
-          </form>
+              </form>
+            </>
+          )}
         </div>
       )}
 
@@ -1288,6 +1373,21 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
               )}
             </CardContent>
           </Card>
+
+          {/* Info Tutup Sementara di bagian bawah tabel riwayat */}
+          {isLocked && (
+            <div className="p-4 rounded-xl border border-dashed border-amber-300 dark:border-amber-900/60 bg-amber-50/40 dark:bg-amber-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2.5 text-amber-900 dark:text-amber-200">
+                <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span className="text-xs">
+                  <strong>Status Layanan: Tutup Sementara</strong> — Pembuatan permohonan surat izin baru ditutup sementara selama jam KBM aktif (07.30 - 15.30 WIB). Pemantauan dan pelacakan status permohonan yang ada tetap dapat dilakukan secara normal.
+                </span>
+              </div>
+              <Badge variant="outline" className="border-amber-300 text-amber-700 dark:text-amber-400 shrink-0 self-start sm:self-auto">
+                Tutup Sementara
+              </Badge>
+            </div>
+          )}
         </div>
       )}
 

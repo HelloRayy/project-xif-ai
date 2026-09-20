@@ -79,18 +79,12 @@ export default function App() {
           {/* Dynamic Dashboard Body Content */}
           <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
             {currentUser.role === 'STUDENT' && (
-              isLocked ? (
-                <StudentLockedView
-                  currentUser={currentUser}
-                  onLogout={handleLogout}
-                />
-              ) : (
-                <StudentDashboard
-                  currentUser={currentUser}
-                  activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                />
-              )
+              <StudentDashboard
+                currentUser={currentUser}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isLocked={isLocked}
+              />
             )}
 
             {currentUser.role === 'TEACHER' && (
