@@ -74,75 +74,28 @@ export function LoginForm({
   const [errorMsg, setErrorMsg] = useState("")
   const [showInfoDialog, setShowInfoDialog] = useState(false)
 
-  // Siswa Form State - clean empty default
+  // Siswa Form State: Kelas -> Nama Lengkap -> NISN (Input sendiri tanpa suggestion)
+  const [studentClass, setStudentClass] = useState("")
   const [studentName, setStudentName] = useState("")
   const [studentNisn, setStudentNisn] = useState("")
-  const [detectedClass, setDetectedClass] = useState("")
-  const [isNameFocused, setIsNameFocused] = useState(false)
-  const [selectedStudentObj, setSelectedStudentObj] = useState(null)
 
-  // Guru Form State - clean empty default
+  // Guru Form State
   const [teacherName, setTeacherName] = useState("")
   const [teacherNip, setTeacherNip] = useState("")
   const [teacherAssignedClass, setTeacherAssignedClass] = useState("")
 
-  // BK / TU Form State - clean empty default
+  // BK / TU Form State
   const [adminName, setAdminName] = useState("")
   const [adminNip, setAdminNip] = useState("")
-
-  const studentSearchRef = useRef(null)
 
   // All student options (216 students across XI-A s/d XI-F)
   const allStudents = useMemo(() => initialStudents || [], [])
 
-  // Filtered student suggestions based on user keystrokes
-  const filteredStudentSuggestions = useMemo(() => {
-    const q = studentName.toLowerCase().trim()
-    if (!q) return []
-    return allStudents.filter(s => {
-      const matchName = s.name.toLowerCase().includes(q)
-      const matchNisn = (s.nisn || "").includes(q)
-      return matchName || matchNisn
-    }).slice(0, 8)
-  }, [studentName, allStudents])
-
-  // Select a student from the autocomplete dropdown
-  const handleSelectStudent = (st) => {
-    setStudentName(st.name)
-    setStudentNisn(st.nisn)
-    setDetectedClass(st.class)
-    setSelectedStudentObj(st)
-    setIsNameFocused(false)
-    setErrorMsg("")
-  }
-
-  // Handle typing inside the student name input field
-  const handleStudentNameInput = (val) => {
-    setStudentName(val)
-    setErrorMsg("")
-    
-    // Check for exact matching
-    const exactMatch = allStudents.find(
-      s => s.name.toLowerCase().trim() === val.toLowerCase().trim()
-    )
-    if (exactMatch) {
-      setStudentNisn(exactMatch.nisn)
-      setDetectedClass(exactMatch.class)
-      setSelectedStudentObj(exactMatch)
-    } else {
-      setDetectedClass("")
-      setSelectedStudentObj(null)
-    }
-  }
-
-  // Clear student form inputs
-  const handleClearStudent = () => {
-    setStudentName("")
-    setStudentNisn("")
-    setDetectedClass("")
-    setSelectedStudentObj(null)
-    setErrorMsg("")
-  }
+  // Filter students by selected class for accurate matching
+  const classStudents = useMemo(() => {
+    if (!studentClass) return []
+    return allStudents.filter(s => s.class === studentClass)
+  }, [studentClass, allStudents])
 
   // Handle Teacher Selector
   const handleSelectTeacher = (t) => {
@@ -173,37 +126,53 @@ export function LoginForm({
     let foundUser = null
 
     if (selectedRole === "STUDENT") {
-      const cleanName = studentName.toLowerCase().trim()
-      const cleanNisn = studentNisn.replace(/[^0-9]/g, "").trim()
-
-      if (!cleanName && !cleanNisn) {
-        setErrorMsg("Mohon masukkan Nama Lengkap atau NISN siswa.")
+      if (!studentClass) {
+        setErrorMsg("Mohon pilih Kelas terlebih dahulu.")
         return
       }
 
-      // Find in storage or initialData
+      const cleanName = studentName.toLowerCase().trim()
+      const cleanNisn = studentNisn.replace(/[^0-9]/g, "").trim()
+
+      if (!cleanName) {
+        setErrorMsg("Mohon masukkan Nama Lengkap siswa.")
+        return
+      }
+
+      if (!cleanNisn) {
+        setErrorMsg("Mohon masukkan NISN siswa (10 digit).")
+        return
+      }
+
+      // Match student within the selected class
+      // 1. Search in users database
       foundUser = users.find(u => {
         if (u.role !== "STUDENT") return false
+        if (u.class !== studentClass) return false
+
         const uName = (u.name || "").toLowerCase().trim()
         const uNisn = (u.nisn || "").replace(/[^0-9]/g, "")
         const uNis = (u.nis || "").replace(/[^0-9]/g, "")
 
-        const nameMatches = cleanName && (uName === cleanName || uName.includes(cleanName) || cleanName.includes(uName))
-        const nisnMatches = cleanNisn && (uNisn === cleanNisn || uNis === cleanNisn)
+        const nameMatches = uName === cleanName || uName.includes(cleanName) || cleanName.includes(uName)
+        const nisnMatches = uNisn === cleanNisn || uNis === cleanNisn
 
-        if (cleanName && cleanNisn) {
-          return nameMatches && (nisnMatches || !uNisn)
-        }
-        return nameMatches || nisnMatches
+        return nameMatches && nisnMatches
       })
 
-      // Fallback: search in initialStudents and build full student user object
+      // 2. Fallback: Search in class students list
       if (!foundUser) {
-        const matchStudent = allStudents.find(s => {
+        const matchStudent = classStudents.find(s => {
           const sName = s.name.toLowerCase().trim()
           const sNisn = (s.nisn || "").replace(/[^0-9]/g, "")
-          return (cleanName && (sName === cleanName || sName.includes(cleanName))) || (cleanNisn && sNisn === cleanNisn)
+          const sNis = (s.nis || "").replace(/[^0-9]/g, "")
+
+          const nameMatches = sName === cleanName || sName.includes(cleanName) || cleanName.includes(sName)
+          const nisnMatches = sNisn === cleanNisn || sNis === cleanNisn
+
+          return nameMatches && nisnMatches
         })
+
         if (matchStudent) {
           foundUser = {
             id: matchStudent.id,
@@ -378,108 +347,104 @@ export function LoginForm({
         )}
 
         {/* ====================================================================
-            ROLE: SISWA (NAMA LENGKAP DENGAN NATURAL AUTOCOMPLETE + NISN)
+            ROLE: SISWA (FLOW: KELAS -> INPUT NAMA -> INPUT NISN TANPA SUGGESTION)
             ==================================================================== */}
         {selectedRole === "STUDENT" && (
           <div className="flex flex-col gap-3.5 bg-card p-3.5 rounded-xl border border-border shadow-xs">
             
-            {/* Input Nama Lengkap Siswa dengan Direct Dropdown Suggestion */}
-            <div className="flex flex-col gap-1.5 relative" ref={studentSearchRef}>
+            {/* 1. Pilih Kelas Siswa */}
+            <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="student-name-input" className="text-xs font-semibold text-foreground">
-                  Nama Lengkap Siswa
+                <Label htmlFor="student-class-select" className="text-xs font-semibold text-foreground">
+                  1. Pilih Kelas
                 </Label>
                 <span className="text-[10px] text-muted-foreground">
-                  Cakup Kelas XI-A s/d XI-F
+                  XI-A s/d XI-F
                 </span>
               </div>
+              <select
+                id="student-class-select"
+                value={studentClass}
+                onChange={(e) => {
+                  setStudentClass(e.target.value)
+                  setErrorMsg("")
+                }}
+                className="w-full h-10 px-3 text-xs bg-background border border-border rounded-lg font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+              >
+                <option value="">-- Pilih Kelas Siswa --</option>
+                <option value="XI-A">Kelas XI-A</option>
+                <option value="XI-B">Kelas XI-B</option>
+                <option value="XI-C">Kelas XI-C</option>
+                <option value="XI-D">Kelas XI-D</option>
+                <option value="XI-E">Kelas XI-E</option>
+                <option value="XI-F">Kelas XI-F</option>
+              </select>
+            </div>
 
+            {/* 2. Input Nama Lengkap Siswa (Manual tanpa suggestion) */}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="student-name-input" className="text-xs font-semibold text-foreground">
+                  2. Nama Lengkap Siswa
+                </Label>
+                {studentClass && (
+                  <span className="text-[10px] text-muted-foreground">
+                    Siswa terdaftar di {studentClass}
+                  </span>
+                )}
+              </div>
               <div className="relative flex items-center">
                 <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
                   id="student-name-input"
                   type="text"
                   autoComplete="off"
-                  placeholder="Ketik nama lengkap siswa..."
+                  placeholder={studentClass ? `Ketik nama lengkap siswa di kelas ${studentClass}...` : "Pilih kelas terlebih dahulu..."}
+                  disabled={!studentClass}
                   value={studentName}
-                  onFocus={() => setIsNameFocused(true)}
-                  onChange={(e) => handleStudentNameInput(e.target.value)}
-                  className="pl-9 pr-8 h-10 text-xs shadow-xs focus-visible:ring-primary"
+                  onChange={(e) => {
+                    setStudentName(e.target.value)
+                    setErrorMsg("")
+                  }}
+                  className="pl-9 pr-8 h-10 text-xs shadow-xs focus-visible:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 />
-                {studentName ? (
+                {studentName && (
                   <button
                     type="button"
-                    onClick={handleClearStudent}
+                    onClick={() => setStudentName("")}
                     className="absolute right-2.5 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
-                ) : (
-                  <Search className="w-3.5 h-3.5 text-muted-foreground absolute right-3 pointer-events-none opacity-40" />
                 )}
               </div>
-
-              {/* Seamless Autocomplete Dropdown */}
-              {isNameFocused && filteredStudentSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-popover border border-border rounded-lg shadow-lg overflow-hidden animate-in fade-in-50 zoom-in-95 duration-100">
-                  <div className="p-1 text-[10px] font-semibold text-muted-foreground bg-muted/30 border-b border-border px-3 py-1.5">
-                    Pilih Nama Siswa:
-                  </div>
-                  <div className="max-h-52 overflow-y-auto divide-y divide-border/40">
-                    {filteredStudentSuggestions.map((st) => (
-                      <div
-                        key={st.id}
-                        onMouseDown={() => handleSelectStudent(st)}
-                        className="flex items-center justify-between px-3 py-2 text-xs hover:bg-muted/80 cursor-pointer transition-colors"
-                      >
-                        <div className="flex flex-col pr-2">
-                          <span className="font-medium text-foreground">{st.name}</span>
-                          <span className="text-[10px] text-muted-foreground font-mono">NISN: {st.nisn}</span>
-                        </div>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary shrink-0">
-                          {st.class}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Input NISN Siswa */}
+            {/* 3. Input NISN Siswa (Input sendiri manual tanpa suggestion) */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="student-nisn-input" className="text-xs font-semibold text-foreground">
-                Nomor Induk Siswa Nasional (NISN)
+                3. Nomor Induk Siswa Nasional (NISN)
               </Label>
               <div className="relative flex items-center">
                 <IdCard className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
                   id="student-nisn-input"
                   type="text"
-                  placeholder="10 Digit NISN (terisi otomatis saat nama dipilih)"
+                  autoComplete="off"
+                  placeholder="Masukkan 10 digit NISN Anda..."
+                  disabled={!studentClass}
                   value={studentNisn}
                   onChange={(e) => {
                     setStudentNisn(e.target.value)
                     setErrorMsg("")
                   }}
-                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono"
+                  className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary font-mono disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
-            </div>
-
-            {/* Status Deteksi Otomatis Kelas */}
-            {detectedClass ? (
-              <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                <div className="text-[11px] leading-snug">
-                  Siswa terdaftar di <strong>Kelas {detectedClass}</strong>. Langsung terhubung ke portal kelas.
-                </div>
-              </div>
-            ) : (
-              <p className="text-[11px] text-muted-foreground italic px-1">
-                Ketik nama lengkap siswa di atas untuk mengisi NISN dan kelas secara otomatis.
+              <p className="text-[11px] text-muted-foreground pt-0.5">
+                Pastikan nama lengkap dan NISN sesuai dengan data sekolah di kelas yang dipilih.
               </p>
-            )}
+            </div>
 
           </div>
         )}
@@ -671,7 +636,7 @@ export function LoginForm({
                 Sistem ini tidak menggunakan password untuk memudahkan siswa dan guru:
               </p>
               <ul className="list-disc pl-4 space-y-1">
-                <li><strong>Siswa</strong>: Masuk menggunakan <em>Nama Lengkap</em> & <em>NISN</em>. Kelas akan otomatis terdeteksi.</li>
+                <li><strong>Siswa</strong>: Pilih <em>Kelas</em>, lalu masukkan <em>Nama Lengkap</em> & <em>NISN</em> Anda.</li>
                 <li><strong>Guru (Wali Kelas)</strong>: Masuk menggunakan <em>Nama Lengkap</em> & <em>NIP</em>.</li>
                 <li><strong>Guru BK / TU</strong>: Masuk menggunakan <em>Nama Petugas</em> & <em>NIP</em>.</li>
               </ul>
