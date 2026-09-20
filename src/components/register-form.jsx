@@ -65,7 +65,9 @@ export function RegisterForm({
   const [selectedRole, setSelectedRole] = useState("STUDENT")
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [selectedClass, setSelectedClass] = useState("XI-A")
   
   const [errorMsg, setErrorMsg] = useState("")
@@ -76,13 +78,18 @@ export function RegisterForm({
     e.preventDefault()
     setErrorMsg("")
 
-    if (!name.trim() || !password) {
+    if (!name.trim() || !password || !confirmPassword) {
       setErrorMsg("Mohon lengkapi seluruh formulir yang wajib diisi.")
       return
     }
 
     if (password.length < 6) {
       setErrorMsg("Kata sandi minimal harus 6 karakter.")
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMsg("Konfirmasi kata sandi tidak cocok dengan kata sandi yang diisi.")
       return
     }
 
@@ -184,7 +191,7 @@ export function RegisterForm({
           </Alert>
         )}
 
-        {/* Role Selector Combobox - Identical to LoginForm */}
+        {/* 1. Role Selector Combobox */}
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs font-semibold text-foreground">
             Daftar Sebagai (Peran)
@@ -252,52 +259,7 @@ export function RegisterForm({
           </Popover>
         </div>
 
-        {/* Full Name */}
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="reg-name" className="text-xs font-semibold text-foreground">
-            Nama Lengkap
-          </Label>
-          <div className="relative flex items-center">
-            <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
-            <Input
-              id="reg-name"
-              type="text"
-              placeholder="Contoh: Muhammad Rizky Pratama"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
-            />
-          </div>
-        </div>
-
-        {/* Password */}
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="reg-password" className="text-xs font-semibold text-foreground">
-            Kata Sandi
-          </Label>
-          <div className="relative flex items-center">
-            <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
-            <Input
-              id="reg-password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Min. 6 karakter"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="pl-9 pr-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {showPassword ? <EyeOff className="w-4 h-4 opacity-70" /> : <Eye className="w-4 h-4 opacity-70" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Dynamic Class Combobox based on Role */}
+        {/* 2. Dynamic Class Combobox based on Role */}
         {selectedRole !== 'ADMIN' && (
           <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
             <Label className="text-xs font-semibold text-foreground">
@@ -360,6 +322,77 @@ export function RegisterForm({
             </Popover>
           </div>
         )}
+
+        {/* 3. Full Name */}
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="reg-name" className="text-xs font-semibold text-foreground">
+            Nama Lengkap
+          </Label>
+          <div className="relative flex items-center">
+            <User className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
+            <Input
+              id="reg-name"
+              type="text"
+              placeholder="Contoh: Muhammad Rizky Pratama"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="pl-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
+            />
+          </div>
+        </div>
+
+        {/* 4. Password */}
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="reg-password" className="text-xs font-semibold text-foreground">
+            Kata Sandi
+          </Label>
+          <div className="relative flex items-center">
+            <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
+            <Input
+              id="reg-password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Min. 6 karakter"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pl-9 pr-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4 opacity-70" /> : <Eye className="w-4 h-4 opacity-70" />}
+            </button>
+          </div>
+        </div>
+
+        {/* 5. Confirm Password */}
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="reg-confirm-password" className="text-xs font-semibold text-foreground">
+            Konfirmasi Kata Sandi
+          </Label>
+          <div className="relative flex items-center">
+            <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-50" />
+            <Input
+              id="reg-confirm-password"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Ulangi kata sandi"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="pl-9 pr-9 h-10 text-xs shadow-xs focus-visible:ring-primary"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showConfirmPassword ? <EyeOff className="w-4 h-4 opacity-70" /> : <Eye className="w-4 h-4 opacity-70" />}
+            </button>
+          </div>
+        </div>
 
         {/* Submit Register Button */}
         <Button
