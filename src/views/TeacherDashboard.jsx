@@ -69,6 +69,16 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
   const [customDate, setCustomDate] = useState('');
   const [selectedStudentDetail, setSelectedStudentDetail] = useState(null);
 
+  // Live Clock State
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Image Lightbox Preview Modal State
   const [previewImageModal, setPreviewImageModal] = useState(null);
 
@@ -328,6 +338,19 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* Real-time WIB Clock Widget */}
+              <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-2.5">
+                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                    {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </span>
+                  <span className="font-mono text-xs font-bold text-foreground">
+                    {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
+                  </span>
+                </div>
+              </div>
+
               <Card className="px-4 py-2 bg-card border border-border text-center shadow-xs">
                 <p className="text-xs text-amber-700 dark:text-amber-400 font-medium uppercase tracking-wider">Antrean Verifikasi</p>
                 <p className="text-2xl font-semibold text-slate-900 dark:text-zinc-50 mt-0.5">{pendingQueue.length}</p>

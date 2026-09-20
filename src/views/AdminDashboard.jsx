@@ -90,6 +90,15 @@ export default function AdminDashboard({ currentUser, activeTab }) {
   // Portal Lock Mode for Student Access Control
   const [portalLockMode, setPortalLockModeState] = useState(getPortalLockMode());
   const [isCurrentlyLocked, setIsCurrentlyLocked] = useState(isPortalLockedNow());
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+      setIsCurrentlyLocked(isPortalLockedNow());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleToggleLockMode = (newMode) => {
     setPortalLockMode(newMode);
@@ -433,8 +442,21 @@ export default function AdminDashboard({ currentUser, activeTab }) {
           </p>
         </div>
 
-        {/* Emergency Lock Control Widget & Export Button */}
+        {/* Real-time Clock, Emergency Lock Control Widget & Export Button */}
         <div className="flex flex-wrap items-center gap-2.5">
+          {/* Real-time WIB Clock Widget */}
+          <div className="px-3 py-1.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-2">
+            <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+            <div className="flex flex-col text-left">
+              <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
+              </span>
+              <span className="font-mono text-xs font-bold text-foreground">
+                {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
+              </span>
+            </div>
+          </div>
+
           {/* Emergency Lock Toggle */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border bg-card shadow-2xs">
             <div className="flex items-center gap-1.5 text-xs">
@@ -605,20 +627,6 @@ export default function AdminDashboard({ currentUser, activeTab }) {
                 )}
               >
                 Semua Permohonan ({requests.length})
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStatusFilter('DIPROSES_TU')}
-                className={cn(
-                  "px-3 py-1.5 rounded-lg transition-all text-xs font-medium whitespace-nowrap flex items-center gap-1.5 cursor-pointer",
-                  statusFilter === 'DIPROSES_TU'
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "bg-background hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200/80 dark:border-blue-900/50"
-                )}
-              >
-                <Clock className="w-3.5 h-3.5" />
-                <span>Diproses TU ({pendingTUCount})</span>
               </button>
 
               <button

@@ -183,6 +183,16 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
   const [documents, setDocuments] = useState([]);
   const [selectedReqDetail, setSelectedReqDetail] = useState(null);
 
+  // Live Clock State
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Single-Pass Form State
   const [openServiceCombobox, setOpenServiceCombobox] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState('');
@@ -518,17 +528,33 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab 
                 Selamat Datang, {currentUser.name}! 👋
               </h1>
               <p className="text-sm font-normal text-slate-600 dark:text-zinc-400 mt-1">
-                NIS: <span className="font-medium text-slate-800 dark:text-zinc-200">{currentUser.nis || '20261001'}</span> • Kelas: <span className="font-medium text-slate-800 dark:text-zinc-200">{currentUser.class || 'X-IPA 1'}</span> • Siswa Aktif SMA N 6 Semarang
+                NIS: <span className="font-medium text-slate-800 dark:text-zinc-200">{currentUser.nis || '20261001'}</span> • Kelas: <span className="font-medium text-slate-800 dark:text-zinc-200">{currentUser.class || 'XI-A'}</span> • Siswa Aktif SMAN 6 Semarang
               </p>
             </div>
-            <Button
-              variant="default"
-              onClick={() => setActiveTab('NEW_REQUEST')}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm shadow-sm self-start md:self-auto rounded-lg px-4 h-10"
-            >
-              <FilePlus className="w-4 h-4" />
-              <span>Buat Pengajuan Baru</span>
-            </Button>
+
+            <div className="flex items-center gap-3">
+              {/* Real-time WIB Clock Widget */}
+              <div className="px-3.5 py-1.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-2.5">
+                <Clock className="w-4 h-4 text-primary shrink-0" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                    {currentTime.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </span>
+                  <span className="font-mono text-xs font-bold text-foreground">
+                    {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} WIB
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                variant="default"
+                onClick={() => setActiveTab('NEW_REQUEST')}
+                className="gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm shadow-sm rounded-lg px-4 h-10"
+              >
+                <FilePlus className="w-4 h-4" />
+                <span>Buat Pengajuan Baru</span>
+              </Button>
+            </div>
           </div>
 
           {/* Metric Stats Cards */}
