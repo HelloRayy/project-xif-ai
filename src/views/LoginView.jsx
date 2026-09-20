@@ -28,7 +28,7 @@ export default function LoginView({ onLoginSuccess }) {
 
         {/* Dynamic Center Form */}
         <div className="flex flex-1 items-center justify-center py-6">
-          <div className="w-full max-w-sm">
+          <div className="w-full max-w-md">
             {authMode === 'login' ? (
               <LoginForm 
                 onLoginSuccess={onLoginSuccess} 

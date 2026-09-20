@@ -436,7 +436,7 @@ export function LoginForm({
             ROLE: SISWA (FLOW: KELAS -> INPUT NAMA -> INPUT NISN -> PASSWORD)
             ==================================================================== */}
         {selectedRole === "STUDENT" && (
-          <div className="flex flex-col gap-3.5 bg-card p-3.5 rounded-xl border border-border shadow-xs">
+          <div className="flex flex-col gap-4">
             
             {/* 1. Pilih Kelas Siswa */}
             <div className="flex flex-col gap-1.5">
@@ -618,7 +618,7 @@ export function LoginForm({
             ROLE: GURU (WALI KELAS XI-A s/d XI-F) - INPUT MANUAL TANPA SELECTOR
             ==================================================================== */}
         {selectedRole === "TEACHER" && (
-          <div className="flex flex-col gap-3.5 bg-card p-3.5 rounded-xl border border-border shadow-xs">
+          <div className="flex flex-col gap-4">
             
             {/* 1. Nama Lengkap Guru Input */}
             <div className="flex flex-col gap-1.5">
@@ -740,7 +740,7 @@ export function LoginForm({
             ROLE: GURU BK (BIMBINGAN & KONSELING) - INPUT MANUAL TANPA SELECTOR
             ==================================================================== */}
         {selectedRole === "ADMIN" && (
-          <div className="flex flex-col gap-3.5 bg-card p-3.5 rounded-xl border border-border shadow-xs">
+          <div className="flex flex-col gap-4">
             
             {/* 1. Nama Lengkap Guru BK Input */}
             <div className="flex flex-col gap-1.5">
