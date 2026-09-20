@@ -65,7 +65,7 @@ export default function LoginView({ onLoginSuccess }) {
               SMA Negeri 6 Semarang
             </h3>
             <p className="text-xs text-white/90 mt-1.5 leading-relaxed drop-shadow-sm">
-              Sistem Digitalisasi Tata Kelola Administrasi & Layanan Surat Sekolah Terpadu Berbasis AI
+              Sistem Digitalisasi Tata Kelola Administrasi & Layanan Surat Sekolah Terpadu
             </p>
           </div>
         </div>

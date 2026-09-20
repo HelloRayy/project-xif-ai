@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SiteHeader } from '@/components/site-header';
-import AIChatbotModal from './components/AIChatbotModal';
 import LoginView from './views/LoginView';
 import StudentDashboard from './views/StudentDashboard';
 import TeacherDashboard from './views/TeacherDashboard';
@@ -12,7 +11,6 @@ import { getCurrentUser, setCurrentUser, initStorage } from './services/storage'
 export default function App() {
   const [currentUser, setCurrentUserState] = useState(null);
   const [activeTab, setActiveTab] = useState('OVERVIEW');
-  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
   useEffect(() => {
     initStorage();
@@ -33,10 +31,6 @@ export default function App() {
     setActiveTab('OVERVIEW');
   };
 
-  const toggleAIChat = () => {
-    setIsAIChatOpen(prev => !prev);
-  };
-
   if (!currentUser) {
     return <LoginView onLoginSuccess={handleLoginSuccess} />;
   }
@@ -50,7 +44,6 @@ export default function App() {
           currentUser={currentUser}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          toggleAIChat={toggleAIChat}
           onLogout={handleLogout}
         />
 
@@ -61,7 +54,6 @@ export default function App() {
           <SiteHeader
             currentUser={currentUser}
             activeTab={activeTab}
-            toggleAIChat={toggleAIChat}
           />
 
           {/* Dynamic Dashboard Body Content */}
@@ -71,7 +63,6 @@ export default function App() {
                 currentUser={currentUser}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                toggleAIChat={toggleAIChat}
               />
             )}
 
@@ -103,18 +94,6 @@ export default function App() {
           </footer>
 
         </SidebarInset>
-
-        {/* AI Chatbot Floating FAB & Assistant Widget */}
-        <AIChatbotModal
-          isOpen={isAIChatOpen}
-          currentUser={currentUser}
-          onOpen={() => setIsAIChatOpen(true)}
-          onClose={() => setIsAIChatOpen(false)}
-          onNavigateTab={(tab) => {
-            setActiveTab(tab);
-            setIsAIChatOpen(false);
-          }}
-        />
 
       </div>
     </SidebarProvider>

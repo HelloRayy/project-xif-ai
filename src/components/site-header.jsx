@@ -8,14 +8,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Sparkles, GraduationCap, Building2, UserCheck } from "lucide-react"
+import { GraduationCap, Building2, UserCheck } from "lucide-react"
 
 export function SiteHeader({
   currentUser,
-  activeTab,
-  toggleAIChat
+  activeTab
 }) {
   const getTabTitle = () => {
     switch (activeTab) {
@@ -90,20 +88,9 @@ export function SiteHeader({
         </Breadcrumb>
       </div>
 
-      {/* Right: Role Badge & AI Quick Action */}
+      {/* Right: Role Badge */}
       <div className="flex items-center gap-2 shrink-0">
         {currentUser && getRoleBadge()}
-        
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={toggleAIChat}
-          className="gap-1.5 h-8 px-2.5 text-xs font-semibold border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 shadow-xs"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span className="hidden sm:inline">Asisten AI</span>
-        </Button>
       </div>
 
     </header>

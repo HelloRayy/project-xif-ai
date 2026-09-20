@@ -40,7 +40,6 @@ export function AppSidebar({
   currentUser,
   activeTab,
   setActiveTab,
-  toggleAIChat,
   onLogout,
   ...props
 }) {
