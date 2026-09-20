@@ -1668,7 +1668,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
         students={displayedStudents}
         requests={requests}
         teacherName={currentUser?.name || "Hj. Ratna Sari, S.E."}
-        teacherNip={currentUser?.nip || "19750618 200112 2 003"}
+        teacherNip={currentUser?.nip || "12345"}
       />
 
     </div>

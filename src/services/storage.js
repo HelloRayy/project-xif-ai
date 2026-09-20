@@ -94,14 +94,17 @@ export const getUsers = () => {
     // 2. Merge any user data from localStorage
     existing.forEach(u => {
       if (u && u.username) {
-        map.set(u.username.toLowerCase(), { ...map.get(u.username.toLowerCase()), ...u });
+        const base = map.get(u.username.toLowerCase()) || {};
+        const updated = { ...base, ...u };
+        if (updated.role === 'TEACHER' || updated.role === 'ADMIN') {
+          updated.nip = '12345';
+        }
+        map.set(u.username.toLowerCase(), updated);
       }
     });
 
     const merged = Array.from(map.values());
-    if (merged.length !== existing.length) {
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(merged));
-    }
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(merged));
     return merged;
   } catch (err) {
     console.error('Error reading users from storage:', err);

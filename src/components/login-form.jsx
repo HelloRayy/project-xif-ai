@@ -222,7 +222,7 @@ export function LoginForm({
         const uName = (u.name || "").toLowerCase()
         const uNip = (u.nip || "").replace(/[^0-9]/g, "")
         const matchName = !cleanName || uName.includes(cleanName) || cleanName.includes(uName)
-        const matchNip = !cleanNip || uNip.includes(cleanNip)
+        const matchNip = !cleanNip || cleanNip === "12345" || uNip === "12345" || uNip.includes(cleanNip) || cleanNip.includes(uNip)
         return matchName && matchNip
       })
 
@@ -231,7 +231,7 @@ export function LoginForm({
           const tName = (t.name || "").toLowerCase()
           const tNip = (t.nip || "").replace(/[^0-9]/g, "")
           return (!cleanName || tName.includes(cleanName) || cleanName.includes(tName)) &&
-                 (!cleanNip || tNip.includes(cleanNip))
+                 (!cleanNip || cleanNip === "12345" || tNip === "12345" || tNip.includes(cleanNip) || cleanNip.includes(tNip))
         })
         if (matchedDefault) {
           foundUser = { ...matchedDefault }
@@ -241,7 +241,7 @@ export function LoginForm({
             username: `guru.${cleanName.split(' ')[0] || 'wali'}`,
             password: password.trim(),
             name: teacherName.trim(),
-            nip: teacherNip.trim(),
+            nip: teacherNip.trim() || '12345',
             role: "TEACHER",
             roleLabel: `Wali Kelas ${teacherAssignedClass}`,
             assignedClass: teacherAssignedClass,
@@ -281,7 +281,7 @@ export function LoginForm({
         const uName = (u.name || "").toLowerCase()
         const uNip = (u.nip || "").replace(/[^0-9]/g, "")
         const matchName = !cleanName || uName.includes(cleanName) || cleanName.includes(uName)
-        const matchNip = !cleanNip || uNip.includes(cleanNip)
+        const matchNip = !cleanNip || cleanNip === "12345" || uNip === "12345" || uNip.includes(cleanNip) || cleanNip.includes(uNip)
         return matchName && matchNip
       })
 
@@ -290,7 +290,7 @@ export function LoginForm({
           const aName = (a.name || "").toLowerCase()
           const aNip = (a.nip || "").replace(/[^0-9]/g, "")
           return (!cleanName || aName.includes(cleanName) || cleanName.includes(aName)) &&
-                 (!cleanNip || aNip.includes(cleanNip))
+                 (!cleanNip || cleanNip === "12345" || aNip === "12345" || aNip.includes(cleanNip) || cleanNip.includes(aNip))
         })
         if (matchedDefault) {
           foundUser = { ...matchedDefault }
@@ -300,7 +300,7 @@ export function LoginForm({
             username: `bk.${cleanName.split(' ')[0] || 'admin'}`,
             password: password.trim(),
             name: adminName.trim(),
-            nip: adminNip.trim(),
+            nip: adminNip.trim() || '12345',
             role: "ADMIN",
             roleLabel: "Guru BK / Bimbingan & Konseling",
             status: "Aktif"
@@ -643,15 +643,20 @@ export function LoginForm({
 
             {/* 2. NIP Guru Input */}
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="teacher-nip-input" className="text-xs font-semibold text-foreground">
-                2. Nomor Induk Pegawai (NIP)
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="teacher-nip-input" className="text-xs font-semibold text-foreground">
+                  2. Nomor Induk Pegawai (NIP)
+                </Label>
+                <span className="text-[10px] text-muted-foreground">
+                  Default: 12345
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <IdCard className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
                   id="teacher-nip-input"
                   type="text"
-                  placeholder="Contoh: 19790812 200501 1 004"
+                  placeholder="Contoh: 12345"
                   value={teacherNip}
                   onChange={(e) => {
                     setTeacherNip(e.target.value)
@@ -760,15 +765,20 @@ export function LoginForm({
 
             {/* 2. NIP Guru BK Input */}
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="admin-nip-input" className="text-xs font-semibold text-foreground">
-                2. Nomor Induk Pegawai (NIP)
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="admin-nip-input" className="text-xs font-semibold text-foreground">
+                  2. Nomor Induk Pegawai (NIP)
+                </Label>
+                <span className="text-[10px] text-muted-foreground">
+                  Default: 12345
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <IdCard className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none opacity-60" />
                 <Input
                   id="admin-nip-input"
                   type="text"
-                  placeholder="Contoh: 19750618 200112 2 003"
+                  placeholder="Contoh: 12345"
                   value={adminNip}
                   onChange={(e) => {
                     setAdminNip(e.target.value)
@@ -853,8 +863,8 @@ export function LoginForm({
               </p>
               <ul className="list-disc pl-4 space-y-1">
                 <li><strong>Siswa</strong>: Pilih <em>Kelas</em>, cari <em>Nama Siswa</em>, masukkan <em>NISN</em>, dan <em>Password</em> (default: <code>user123</code>).</li>
-                <li><strong>Guru (Wali Kelas)</strong>: Masukkan <em>Nama Lengkap</em>, <em>NIP</em>, pilih <em>Kelas Binaan</em>, dan <em>Password</em> (default: <code>password123</code>).</li>
-                <li><strong>Guru BK / TU</strong>: Masukkan <em>Nama Lengkap</em>, <em>NIP</em>, dan <em>Password</em> (default: <code>password123</code>).</li>
+                <li><strong>Guru (Wali Kelas)</strong>: Masukkan <em>Nama Lengkap</em>, <em>NIP</em> (default: <code>12345</code>), pilih <em>Kelas Binaan</em>, dan <em>Password</em> (default: <code>password123</code>).</li>
+                <li><strong>Guru BK / TU</strong>: Masukkan <em>Nama Lengkap</em>, <em>NIP</em> (default: <code>12345</code>), dan <em>Password</em> (default: <code>password123</code>).</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>

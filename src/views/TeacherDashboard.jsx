@@ -1460,7 +1460,7 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
         students={students}
         requests={requests}
         teacherName={currentUser?.name || "Wali Kelas"}
-        teacherNip={currentUser?.nip || "19790812 200501 1 004"}
+        teacherNip={currentUser?.nip || "12345"}
       />
 
     </div>
