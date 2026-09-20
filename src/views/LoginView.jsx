@@ -54,9 +54,9 @@ export default function LoginView({ onLoginSuccess }) {
       {/* Right Column: School Banner Image (SMA Negeri 6 Semarang) */}
       <div className="relative hidden bg-muted lg:block overflow-hidden">
         <img
-          src="/school-banner.png"
+          src="/school-banner.jpg"
           alt="SMA Negeri 6 Semarang"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
         {/* Editorial vignette gradient for enterprise aesthetics */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-10 text-white">
