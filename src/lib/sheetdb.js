@@ -14,12 +14,17 @@ export const isSheetDbConfigured = Boolean(
 export const fetchSheetData = async (sheetName) => {
   if (!isSheetDbConfigured) return null;
   try {
-    const url = sheetName 
+    let url = sheetName 
       ? `${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}` 
       : SHEETDB_API_URL;
-    const res = await fetch(url);
+    let res = await fetch(url);
+    if (!res.ok && sheetName) {
+      // Fallback to default sheet
+      res = await fetch(SHEETDB_API_URL);
+    }
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    return await res.json();
+    const data = await res.json();
+    return Array.isArray(data) ? data : null;
   } catch (err) {
     console.warn(`Error fetching Google Sheet (${sheetName}):`, err);
     return null;
@@ -30,10 +35,10 @@ export const fetchSheetData = async (sheetName) => {
 export const insertSheetRow = async (sheetName, rowData) => {
   if (!isSheetDbConfigured) return null;
   try {
-    const url = sheetName 
+    let url = sheetName 
       ? `${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}` 
       : SHEETDB_API_URL;
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -41,6 +46,17 @@ export const insertSheetRow = async (sheetName, rowData) => {
       },
       body: JSON.stringify({ data: [rowData] })
     });
+    if (!res.ok && sheetName) {
+      // Fallback to default sheet
+      res = await fetch(SHEETDB_API_URL, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ data: [rowData] })
+      });
+    }
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
