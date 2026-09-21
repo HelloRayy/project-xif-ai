@@ -14,20 +14,29 @@ export const isSheetDbConfigured = Boolean(
 export const fetchSheetData = async (sheetName) => {
   if (!isSheetDbConfigured) return null;
   try {
-    let url = sheetName 
-      ? `${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}` 
-      : SHEETDB_API_URL;
-    let res = await fetch(url);
-    if (!res.ok && sheetName) {
-      // Fallback to default sheet
+    let url = SHEETDB_API_URL;
+    if (sheetName) {
+      // First try default spreadsheet endpoint directly if single sheet
+      let res = await fetch(`${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}`);
+      if (res.ok) {
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      }
+      // If 404 (sheet tab doesn't exist), fallback to main spreadsheet
       res = await fetch(SHEETDB_API_URL);
+      if (res.ok) {
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      }
+      return [];
     }
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const res = await fetch(url);
+    if (!res.ok) return [];
     const data = await res.json();
-    return Array.isArray(data) ? data : null;
+    return Array.isArray(data) ? data : [];
   } catch (err) {
     console.warn(`Error fetching Google Sheet (${sheetName}):`, err);
-    return null;
+    return [];
   }
 };
 
@@ -35,20 +44,8 @@ export const fetchSheetData = async (sheetName) => {
 export const insertSheetRow = async (sheetName, rowData) => {
   if (!isSheetDbConfigured) return null;
   try {
-    let url = sheetName 
-      ? `${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}` 
-      : SHEETDB_API_URL;
-    let res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ data: [rowData] })
-    });
-    if (!res.ok && sheetName) {
-      // Fallback to default sheet
-      res = await fetch(SHEETDB_API_URL, {
+    const postToUrl = async (url) => {
+      return await fetch(url, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -56,8 +53,20 @@ export const insertSheetRow = async (sheetName, rowData) => {
         },
         body: JSON.stringify({ data: [rowData] })
       });
+    };
+
+    let res = null;
+    if (sheetName) {
+      res = await postToUrl(`${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}`);
+      if (!res.ok) {
+        // Fallback to default sheet
+        res = await postToUrl(SHEETDB_API_URL);
+      }
+    } else {
+      res = await postToUrl(SHEETDB_API_URL);
     }
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+    if (!res.ok) return null;
     return await res.json();
   } catch (err) {
     console.warn(`Error inserting row into Google Sheet (${sheetName}):`, err);
@@ -69,8 +78,8 @@ export const insertSheetRow = async (sheetName, rowData) => {
 export const updateSheetRow = async (sheetName, column, value, updatedData) => {
   if (!isSheetDbConfigured) return null;
   try {
-    const url = `${SHEETDB_API_URL}/${encodeURIComponent(column)}/${encodeURIComponent(value)}${sheetName ? `?sheet=${encodeURIComponent(sheetName)}` : ''}`;
-    const res = await fetch(url, {
+    const patchUrl = `${SHEETDB_API_URL}/${encodeURIComponent(column)}/${encodeURIComponent(value)}`;
+    let res = await fetch(`${patchUrl}${sheetName ? `?sheet=${encodeURIComponent(sheetName)}` : ''}`, {
       method: 'PATCH',
       headers: {
         'Accept': 'application/json',
@@ -78,7 +87,17 @@ export const updateSheetRow = async (sheetName, column, value, updatedData) => {
       },
       body: JSON.stringify({ data: updatedData })
     });
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    if (!res.ok && sheetName) {
+      res = await fetch(patchUrl, {
+        method: 'PATCH',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ data: updatedData })
+      });
+    }
+    if (!res.ok) return null;
     return await res.json();
   } catch (err) {
     console.warn(`Error updating Google Sheet row (${sheetName}):`, err);
