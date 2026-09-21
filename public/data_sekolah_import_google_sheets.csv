@@ -1,0 +1,224 @@
+id,username,password,name,role,roleLabel,assignedClass,class,nip,nisn,nis,status
+usr-teacher-1,guru.ahmad,password123,"Ahmad Dahlan, S.Pd.",TEACHER,Wali Kelas XI-A,XI-A,XI-A,12345,,,Aktif
+usr-teacher-2,guru.siti,password123,"Siti Rahmawati, M.Pd.",TEACHER,Wali Kelas XI-B,XI-B,XI-B,12345,,,Aktif
+usr-teacher-3,guru.bambang,password123,Drs. Bambang Wijaya,TEACHER,Wali Kelas XI-C,XI-C,XI-C,12345,,,Aktif
+usr-teacher-4,guru.dewi,password123,"Dewi Sartika, S.Pd.",TEACHER,Wali Kelas XI-D,XI-D,XI-D,12345,,,Aktif
+usr-teacher-5,guru.hendra,password123,"Hendra Kusuma, M.Si.",TEACHER,Wali Kelas XI-E,XI-E,XI-E,12345,,,Aktif
+usr-teacher-6,guru.rina,password123,"Rina Marlina, S.Pd.",TEACHER,Wali Kelas XI-F,XI-F,XI-F,12345,,,Aktif
+usr-admin-1,admin,password123,"Hj. Ratna Sari, S.E.",ADMIN,Guru BK & Admin,,,12345,,,Aktif
+usr-student-xia-01,siswa.aditiya.lukmanul,user123,Aditiya Lukmanul Hakim,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101001,2026110101,Aktif
+usr-student-xia-02,siswa.aisyah.aluna,user123,Aisyah Aluna Nasyafa,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101002,2026110102,Aktif
+usr-student-xia-03,siswa.aldiana.maisya,user123,Aldiana Maisya Al Soerya,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101003,2026110103,Aktif
+usr-student-xia-04,siswa.alysa.surya,user123,Alysa Surya Anindya,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101004,2026110104,Aktif
+usr-student-xia-05,siswa.anandita.fadea,user123,Anandita Fadea Billqis,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101005,2026110105,Aktif
+usr-student-xia-06,siswa.andhiny.muthmainnah,user123,Andhiny Muthmainnah Yasmin,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101006,2026110106,Aktif
+usr-student-xia-07,siswa.azima.makkiya,user123,Azima Makkiya Nurrosyieda,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101007,2026110107,Aktif
+usr-student-xia-08,siswa.bagaskara.afianto,user123,Bagaskara Afianto,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101008,2026110108,Aktif
+usr-student-xia-09,siswa.bayu.oniditya,user123,Bayu Oniditya Odam,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101009,2026110109,Aktif
+usr-student-xia-10,siswa.diandra.faradina,user123,Diandra Faradina Meilani,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101010,2026110110,Aktif
+usr-student-xia-11,siswa.dimas.lintang,user123,Dimas Lintang Saputra,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101011,2026110111,Aktif
+usr-student-xia-12,siswa.elfina.taqwilla,user123,Elfina Taqwilla Amir,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101012,2026110112,Aktif
+usr-student-xia-13,siswa.fatimah.nasywa,user123,Fatimah Nasywa Shalihah,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101013,2026110113,Aktif
+usr-student-xia-14,siswa.ghania.ammara,user123,Ghania Ammara Shafina Agahra,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101014,2026110114,Aktif
+usr-student-xia-15,siswa.hanaqiara.jenita,user123,Hanaqiara Jenita Marwabidah,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101015,2026110115,Aktif
+usr-student-xia-16,siswa.helza.nurmala,user123,Helza Nurmala,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101016,2026110116,Aktif
+usr-student-xia-17,siswa.keisya.almira,user123,Keisya Almira Sahira,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101017,2026110117,Aktif
+usr-student-xia-18,siswa.keysha.aurellia,user123,Keysha Aurellia Azarine,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101018,2026110118,Aktif
+usr-student-xia-19,siswa.layyina.ilmannafia,user123,Layyina Ilmannafia,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101019,2026110119,Aktif
+usr-student-xia-20,siswa.luthfi.faith,user123,Luthfi Faith Rafi Setyawan,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101020,2026110120,Aktif
+usr-student-xia-21,siswa.maulana.fahri,user123,Maulana Fahri Akmal,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101021,2026110121,Aktif
+usr-student-xia-22,siswa.meyla.khairunnisa,user123,Meyla Khairunnisa,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101022,2026110122,Aktif
+usr-student-xia-23,siswa.muhammad.haekal,user123,Muhammad Haekal Rasendriya,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101023,2026110123,Aktif
+usr-student-xia-24,siswa.muhammad.rafi,user123,Muhammad Rafi Najihan,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101024,2026110124,Aktif
+usr-student-xia-25,siswa.nadia.elva,user123,Nadia Elva Septiana Azarine,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101025,2026110125,Aktif
+usr-student-xia-26,siswa.nayla.labibah,user123,Nayla Labibah,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101026,2026110126,Aktif
+usr-student-xia-27,siswa.nurlaila.ramadhani,user123,Nurlaila Ramadhani,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101027,2026110127,Aktif
+usr-student-xia-28,siswa.olivia.zivanna,user123,Olivia Zivanna Putri Agung,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101028,2026110128,Aktif
+usr-student-xia-29,siswa.queensha.adinda,user123,Queensha Adinda Rosalina,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101029,2026110129,Aktif
+usr-student-xia-30,siswa.raihana.jihan,user123,Raihana Jihan Adila,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101030,2026110130,Aktif
+usr-student-xia-31,siswa.rosyidah.ramadhani,user123,Rosyidah Ramadhani,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101031,2026110131,Aktif
+usr-student-xia-32,siswa.sani.kurniawan,user123,Sani Kurniawan,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101032,2026110132,Aktif
+usr-student-xia-33,siswa.syifana.lathifa,user123,Syifana Lathifa,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101033,2026110133,Aktif
+usr-student-xia-34,siswa.tishandy.cahya,user123,Tishandy Cahya Medina,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101034,2026110134,Aktif
+usr-student-xia-35,siswa.widyalaksmana.harisatya,user123,Widyalaksmana Harisatya Prabamukti,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101035,2026110135,Aktif
+usr-student-xia-36,siswa.zelva.pristika,user123,Zelva Pristika Putri,STUDENT,Siswa Kelas XI-A,,XI-A,,0081101036,2026110136,Aktif
+usr-student-xib-01,siswa.afifah.nurul,user123,Afifah Nurul Hikmah,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102001,2026110201,Aktif
+usr-student-xib-02,siswa.afriza.dwika,user123,Afriza Dwika Rahma,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102002,2026110202,Aktif
+usr-student-xib-03,siswa.aira.cahya,user123,Aira Cahya Agustin,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102003,2026110203,Aktif
+usr-student-xib-04,siswa.anaya.dannisa,user123,Anaya Dannisa Nafi'A,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102004,2026110204,Aktif
+usr-student-xib-05,siswa.angwyn.kenji,user123,Angwyn Kenji Kusumawardhana Widodo,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102005,2026110205,Aktif
+usr-student-xib-06,siswa.anugrah.rizky,user123,Anugrah Rizky Dimas Putra,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102006,2026110206,Aktif
+usr-student-xib-07,siswa.arsya.habibie,user123,Arsya Habibie Arifman,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102007,2026110207,Aktif
+usr-student-xib-08,siswa.aura.bunga,user123,Aura Bunga Aulia,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102008,2026110208,Aktif
+usr-student-xib-09,siswa.bilqis.anisa,user123,Bilqis Anisa,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102009,2026110209,Aktif
+usr-student-xib-10,siswa.dafia.azaria,user123,Dafia Azaria Safa Salsabila,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102010,2026110210,Aktif
+usr-student-xib-11,siswa.elvaretta.althea,user123,Elvaretta Althea Helga Alexandrina,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102011,2026110211,Aktif
+usr-student-xib-12,siswa.fadlil.fatchu,user123,Fadlil Fatchu Rozaq Al Abid,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102012,2026110212,Aktif
+usr-student-xib-13,siswa.florencia.eliana,user123,Florencia Eliana Dyah Ayu Anindita,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102013,2026110213,Aktif
+usr-student-xib-14,siswa.ikbal.abdillah,user123,Ikbal Abdillah,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102014,2026110214,Aktif
+usr-student-xib-15,siswa.indhara.al,user123,Indhara Al Aksansar,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102015,2026110215,Aktif
+usr-student-xib-16,siswa.indy.ramaniya,user123,Indy Ramaniya Amany Putri,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102016,2026110216,Aktif
+usr-student-xib-17,siswa.jeremy.devid,user123,Jeremy Devid Ariando,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102017,2026110217,Aktif
+usr-student-xib-18,siswa.kanza.adila,user123,Kanza Adila Haq,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102018,2026110218,Aktif
+usr-student-xib-19,siswa.kartika.cahyaning,user123,Kartika Cahyaning Mahadewi,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102019,2026110219,Aktif
+usr-student-xib-20,siswa.keisya.rahayu,user123,Keisya Rahayu Putri,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102020,2026110220,Aktif
+usr-student-xib-21,siswa.khairana.fairuuz,user123,Khairana Fairuuz Qurrotu Ainii,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102021,2026110221,Aktif
+usr-student-xib-22,siswa.khalilah.dhawinta,user123,Khalilah Dhawinta Putri,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102022,2026110222,Aktif
+usr-student-xib-23,siswa.kharisma.nilawati,user123,Kharisma Nilawati,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102023,2026110223,Aktif
+usr-student-xib-24,siswa.leandra.feodora,user123,Leandra Feodora Kenzie,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102024,2026110224,Aktif
+usr-student-xib-25,siswa.maha.sentiawati,user123,Maha Sentiawati,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102025,2026110225,Aktif
+usr-student-xib-26,siswa.miranda.larasati,user123,Miranda Larasati A,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102026,2026110226,Aktif
+usr-student-xib-27,siswa.miranti.mediana,user123,Miranti Mediana Magas,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102027,2026110227,Aktif
+usr-student-xib-28,siswa.nayla.nazhira,user123,Nayla Nazhira Nuha,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102028,2026110228,Aktif
+usr-student-xib-29,siswa.novelin.angel,user123,Novelin Angel Nugranto,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102029,2026110229,Aktif
+usr-student-xib-30,siswa.rafie.maulana,user123,Rafie Maulana Dwi Syafikri,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102030,2026110230,Aktif
+usr-student-xib-31,siswa.raihanah.sakhi,user123,Raihanah Sakhi Anindya Yubi,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102031,2026110231,Aktif
+usr-student-xib-32,siswa.shekhinah.glory,user123,Shekhinah Glory Miracle,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102032,2026110232,Aktif
+usr-student-xib-33,siswa.shinta.dewi,user123,Shinta Dewi Prasetyo Putri,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102033,2026110233,Aktif
+usr-student-xib-34,siswa.syafa.khoiril,user123,Syafa Khoiril Febriyati,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102034,2026110234,Aktif
+usr-student-xib-35,siswa.tsamira.nadia,user123,Tsamira Nadia Putri Setiawan,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102035,2026110235,Aktif
+usr-student-xib-36,siswa.wily.adityas,user123,Wily Adityas Widodo,STUDENT,Siswa Kelas XI-B,,XI-B,,0081102036,2026110236,Aktif
+usr-student-xic-01,siswa.adyttia.churniawan,user123,Adyttia Churniawan,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103001,2026110301,Aktif
+usr-student-xic-02,siswa.agnes.melissa,user123,Agnes Melissa Aurellia,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103002,2026110302,Aktif
+usr-student-xic-03,siswa.akmal.azvairel,user123,Akmal Azvairel Sampe,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103003,2026110303,Aktif
+usr-student-xic-04,siswa.alicia.grace,user123,Alicia Grace,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103004,2026110304,Aktif
+usr-student-xic-05,siswa.alisya.khairani,user123,Alisya Khairani Setyawan,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103005,2026110305,Aktif
+usr-student-xic-06,siswa.alysa.safa,user123,Alysa Safa Dwi Cahyani,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103006,2026110306,Aktif
+usr-student-xic-07,siswa.anesya.maulitha,user123,Anesya Maulitha,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103007,2026110307,Aktif
+usr-student-xic-08,siswa.anisa.octaviani,user123,Anisa Octaviani,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103008,2026110308,Aktif
+usr-student-xic-09,siswa.arjuna.febrian,user123,Arjuna Febrian Wibowo,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103009,2026110309,Aktif
+usr-student-xic-10,siswa.cantika.permatasari,user123,Cantika Permatasari,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103010,2026110310,Aktif
+usr-student-xic-11,siswa.chiquita.azzahra,user123,Chiquita Azzahra Wijaya,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103011,2026110311,Aktif
+usr-student-xic-12,siswa.christabel.fitriasya,user123,Christabel Fitriasya Aurella Himawan,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103012,2026110312,Aktif
+usr-student-xic-13,siswa.debora.fransischa,user123,Debora Fransischa Laura,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103013,2026110313,Aktif
+usr-student-xic-14,siswa.diandra.atha,user123,Diandra Atha Abiyy,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103014,2026110314,Aktif
+usr-student-xic-15,siswa.eliyanta.lubnaa,user123,Eliyanta Lubnaa,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103015,2026110315,Aktif
+usr-student-xic-16,siswa.erlangga.rizqi,user123,Erlangga Rizqi Saputra,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103016,2026110316,Aktif
+usr-student-xic-17,siswa.firly.hidayani,user123,Firly Hidayani,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103017,2026110317,Aktif
+usr-student-xic-18,siswa.ghania.novita,user123,Ghania Novita Sari,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103018,2026110318,Aktif
+usr-student-xic-19,siswa.ghania.salsabila,user123,Ghania Salsabila Putriandy,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103019,2026110319,Aktif
+usr-student-xic-20,siswa.grace.anastasya,user123,Grace Anastasya Panjaitan,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103020,2026110320,Aktif
+usr-student-xic-21,siswa.ibrahim.rofiq,user123,Ibrahim Rofiq,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103021,2026110321,Aktif
+usr-student-xic-22,siswa.khaysa.almeera,user123,Khaysa Almeera Elquinnova,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103022,2026110322,Aktif
+usr-student-xic-23,siswa.kristanti.pramusinta,user123,Kristanti Pramusinta,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103023,2026110323,Aktif
+usr-student-xic-24,siswa.luqmaan.agi,user123,Luqmaan Agi Nugraha,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103024,2026110324,Aktif
+usr-student-xic-25,siswa.maheswara.al,user123,Maheswara Al Habsy,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103025,2026110325,Aktif
+usr-student-xic-26,siswa.mirza.arfa,user123,Mirza Arfa Ramdhani,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103026,2026110326,Aktif
+usr-student-xic-27,siswa.mutiara.citra,user123,Mutiara Citra Andana,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103027,2026110327,Aktif
+usr-student-xic-28,siswa.najwa.setya,user123,Najwa Setya Rabbani,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103028,2026110328,Aktif
+usr-student-xic-29,siswa.naufal.afif,user123,Naufal Afif Mahardika,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103029,2026110329,Aktif
+usr-student-xic-30,siswa.nayara.callysta,user123,Nayara Callysta Nuansa Putri,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103030,2026110330,Aktif
+usr-student-xic-31,siswa.neila.paramita,user123,Neila Paramita Syafnel Putri,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103031,2026110331,Aktif
+usr-student-xic-32,siswa.novinca.putri,user123,Novinca Putri Larasati,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103032,2026110332,Aktif
+usr-student-xic-33,siswa.rana.nuha,user123,Rana Nuha Tabriza,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103033,2026110333,Aktif
+usr-student-xic-34,siswa.rayhan.kenzie,user123,Rayhan Kenzie Difinanda,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103034,2026110334,Aktif
+usr-student-xic-35,siswa.sasikirana.putri,user123,Sasikirana Putri Tsany Prastiya,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103035,2026110335,Aktif
+usr-student-xic-36,siswa.tresya.allifia,user123,Tresya Allifia Nida Revana,STUDENT,Siswa Kelas XI-C,,XI-C,,0081103036,2026110336,Aktif
+usr-student-xid-01,siswa.aaliya.syahquita,user123,Aaliya Syahquita Putri,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104001,2026110401,Aktif
+usr-student-xid-02,siswa.abid.rafa,user123,Abid Rafa Arrafi,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104002,2026110402,Aktif
+usr-student-xid-03,siswa.achmad.sifa,user123,Achmad Sifa Alchoir,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104003,2026110403,Aktif
+usr-student-xid-04,siswa.achmad.suffi,user123,Achmad Suffi Bachril Fanani,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104004,2026110404,Aktif
+usr-student-xid-05,siswa.ahmad.wildan,user123,Ahmad Wildan Najmi Ramdhani,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104005,2026110405,Aktif
+usr-student-xid-06,siswa.ajwareva.kireisa,user123,Ajwareva Kireisa Kansha,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104006,2026110406,Aktif
+usr-student-xid-07,siswa.anugrah.putri,user123,Anugrah Putri Kanaya,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104007,2026110407,Aktif
+usr-student-xid-08,siswa.arasy.kaelano,user123,Arasy Kaelano Parama Wastu,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104008,2026110408,Aktif
+usr-student-xid-09,siswa.arlina.rizkia,user123,Arlina Rizkia Putri,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104009,2026110409,Aktif
+usr-student-xid-10,siswa.atifa.wiria,user123,Atifa Wiria Winandita,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104010,2026110410,Aktif
+usr-student-xid-11,siswa.ayu.putri,user123,Ayu Putri Lestari,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104011,2026110411,Aktif
+usr-student-xid-12,siswa.azzaim.azkiyano,user123,Az-Zaim Azkiyano Arkana Muchlis,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104012,2026110412,Aktif
+usr-student-xid-13,siswa.azka.shatura,user123,Azka Shatura Aryawan,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104013,2026110413,Aktif
+usr-student-xid-14,siswa.betrix.almaidah,user123,Betrix Almaidah Wibowo,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104014,2026110414,Aktif
+usr-student-xid-15,siswa.citra.abra,user123,Citra Abra Abia Dalila,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104015,2026110415,Aktif
+usr-student-xid-16,siswa.dani.putra,user123,Dani Putra Soma,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104016,2026110416,Aktif
+usr-student-xid-17,siswa.dimas.akbar,user123,Dimas Akbar Ghiffari,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104017,2026110417,Aktif
+usr-student-xid-18,siswa.dimas.imam,user123,Dimas Imam Ardynata,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104018,2026110418,Aktif
+usr-student-xid-19,siswa.dzaki.abdurrohim,user123,Dzaki Abdurrohim,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104019,2026110419,Aktif
+usr-student-xid-20,siswa.felicia.grace,user123,Felicia Grace Melodiavendi,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104020,2026110420,Aktif
+usr-student-xid-21,siswa.fernanda.syahreza,user123,Fernanda Syahreza,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104021,2026110421,Aktif
+usr-student-xid-22,siswa.galang.cipta,user123,Galang Cipta Prayoga,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104022,2026110422,Aktif
+usr-student-xid-23,siswa.lesthania.yudha,user123,Lesthania Yudha,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104023,2026110423,Aktif
+usr-student-xid-24,siswa.lintang.badar,user123,Lintang Badar Pratama,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104024,2026110424,Aktif
+usr-student-xid-25,siswa.lisdiana.ramadhani,user123,Lisdiana Ramadhani,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104025,2026110425,Aktif
+usr-student-xid-26,siswa.luthfia.ramadhani,user123,Luthfia Ramadhani,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104026,2026110426,Aktif
+usr-student-xid-27,siswa.marchelinus.eka,user123,Marchelinus Eka Prasetya Hardjono,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104027,2026110427,Aktif
+usr-student-xid-28,siswa.muhammad.daffa,user123,Muhammad Daffa Putra Zaini,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104028,2026110428,Aktif
+usr-student-xid-29,siswa.najwa.arkananta,user123,Najwa Arkananta Tsaqif,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104029,2026110429,Aktif
+usr-student-xid-30,siswa.nayshakyra.marvellinda,user123,Nayshakyra Marvellinda Vardhini,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104030,2026110430,Aktif
+usr-student-xid-31,siswa.novalia.safira,user123,Novalia Safira Dinata,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104031,2026110431,Aktif
+usr-student-xid-32,siswa.novanda.dwi,user123,Novanda Dwi Pramesti,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104032,2026110432,Aktif
+usr-student-xid-33,siswa.raditya.pinditra,user123,Raditya Pinditra Yudhistira,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104033,2026110433,Aktif
+usr-student-xid-34,siswa.rahmah.mutiara,user123,Rahmah Mutiara Amalia,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104034,2026110434,Aktif
+usr-student-xid-35,siswa.rivano.ilham,user123,Rivano Ilham Aryanto,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104035,2026110435,Aktif
+usr-student-xid-36,siswa.zahwa.nuraini,user123,Zahwa Nur'Aini,STUDENT,Siswa Kelas XI-D,,XI-D,,0081104036,2026110436,Aktif
+usr-student-xie-01,siswa.admiraldi.ramada,user123,Admiraldi Ramada Septiano,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105001,2026110501,Aktif
+usr-student-xie-02,siswa.afnandya.arviansyah,user123,Afnandya Arviansyah,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105002,2026110502,Aktif
+usr-student-xie-03,siswa.arfan.rheka,user123,Arfan Rheka Satria,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105003,2026110503,Aktif
+usr-student-xie-04,siswa.ashilaa.najwa,user123,Ashilaa Najwa Prasetya,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105004,2026110504,Aktif
+usr-student-xie-05,siswa.aulia.hilalia,user123,Aulia Hilalia Khoirunnisa,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105005,2026110505,Aktif
+usr-student-xie-06,siswa.aurelia.queennara,user123,Aurelia Queennara Nabila,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105006,2026110506,Aktif
+usr-student-xie-07,siswa.ayesha.tiar,user123,Ayesha Tiar Corliss,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105007,2026110507,Aktif
+usr-student-xie-08,siswa.canaya.dwi,user123,Canaya Dwi Agustin,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105008,2026110508,Aktif
+usr-student-xie-09,siswa.dava.rizky,user123,Dava Rizky Prananda,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105009,2026110509,Aktif
+usr-student-xie-10,siswa.david.lingga,user123,David Lingga Mahandika,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105010,2026110510,Aktif
+usr-student-xie-11,siswa.devdan.danadyaksa,user123,Devdan Danadyaksa Putra Prabawa,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105011,2026110511,Aktif
+usr-student-xie-12,siswa.dovizio.arya,user123,Dovizio Arya Vega,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105012,2026110512,Aktif
+usr-student-xie-13,siswa.excel.oktavia,user123,Excel Oktavia Candra Kirana,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105013,2026110513,Aktif
+usr-student-xie-14,siswa.fakhry.syihab,user123,Fakhry Syihab S,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105014,2026110514,Aktif
+usr-student-xie-15,siswa.fathir.ristan,user123,Fathir Ristan Aswan,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105015,2026110515,Aktif
+usr-student-xie-16,siswa.jehan.soraya,user123,Jehan Soraya,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105016,2026110516,Aktif
+usr-student-xie-17,siswa.kenzo.adi,user123,Kenzo Adi Hasan,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105017,2026110517,Aktif
+usr-student-xie-18,siswa.khairunnisa.rizki,user123,Khairunnisa Rizki Ramadhani,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105018,2026110518,Aktif
+usr-student-xie-19,siswa.kharenina.nabella,user123,Kharenina Nabella Putrie,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105019,2026110519,Aktif
+usr-student-xie-20,siswa.krishtian.rama,user123,Krishtian Rama Aljavany,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105020,2026110520,Aktif
+usr-student-xie-21,siswa.lira.maulidya,user123,Lira Maulidya Berly Suryadana,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105021,2026110521,Aktif
+usr-student-xie-22,siswa.massitoh.fatwa,user123,Massitoh Fatwa Loka,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105022,2026110522,Aktif
+usr-student-xie-23,siswa.maulana.singgih,user123,Maulana Singgih Firmansyah,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105023,2026110523,Aktif
+usr-student-xie-24,siswa.mochamad.nur,user123,Mochamad Nur Rochim,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105024,2026110524,Aktif
+usr-student-xie-25,siswa.muhammad.jafir,user123,Muhammad Jafir Nadzif Ramadhan,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105025,2026110525,Aktif
+usr-student-xie-26,siswa.muhammad.jamil,user123,Muhammad Jamil Al Faqih,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105026,2026110526,Aktif
+usr-student-xie-27,siswa.naira.saskia,user123,Naira Saskia Yuki Artamevia,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105027,2026110527,Aktif
+usr-student-xie-28,siswa.najwa.aura,user123,Najwa Aura Izzati,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105028,2026110528,Aktif
+usr-student-xie-29,siswa.naysha.aeera,user123,Naysha Aeera Shazia,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105029,2026110529,Aktif
+usr-student-xie-30,siswa.putri.ayu,user123,Putri Ayu Prasetyaningsih,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105030,2026110530,Aktif
+usr-student-xie-31,siswa.rizki.wulan,user123,Rizki Wulan Artika,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105031,2026110531,Aktif
+usr-student-xie-32,siswa.roni.dwi,user123,Roni Dwi Darmawan,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105032,2026110532,Aktif
+usr-student-xie-33,siswa.sava.casimira,user123,Sava Casimira Haida Hernawati,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105033,2026110533,Aktif
+usr-student-xie-34,siswa.shafwan.yafi,user123,Shafwan Yafi',STUDENT,Siswa Kelas XI-E,,XI-E,,0081105034,2026110534,Aktif
+usr-student-xie-35,siswa.sherly.nayla,user123,Sherly Nayla Pradita,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105035,2026110535,Aktif
+usr-student-xie-36,siswa.zharifah.meyla,user123,Zharifah Meyla Dewi,STUDENT,Siswa Kelas XI-E,,XI-E,,0081105036,2026110536,Aktif
+usr-student-xif-01,siswa.afifah.ladia,user123,Afifah Ladia Amin,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106001,2026110601,Aktif
+usr-student-xif-02,siswa.alifia.naura,user123,Alifia Naura Rinasya,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106002,2026110602,Aktif
+usr-student-xif-03,siswa.amiril.hakim,user123,Amiril Hakim Sanada,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106003,2026110603,Aktif
+usr-student-xif-04,siswa.annasya.dinara,user123,Annasya Dinara Karenina Maurin,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106004,2026110604,Aktif
+usr-student-xif-05,siswa.araska.duby,user123,Araska Duby Prasetya,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106005,2026110605,Aktif
+usr-student-xif-06,siswa.archika.lasnata,user123,Archika Lasnata,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106006,2026110606,Aktif
+usr-student-xif-07,siswa.audra.shafira,user123,Audra Shafira,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106007,2026110607,Aktif
+usr-student-xif-08,siswa.aura.cinta,user123,Aura Cinta Amalia,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106008,2026110608,Aktif
+usr-student-xif-09,siswa.charisa.qanita,user123,Charisa Qanita Suharyanto,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106009,2026110609,Aktif
+usr-student-xif-10,siswa.dafano.restu,user123,Dafano Restu Utama,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106010,2026110610,Aktif
+usr-student-xif-11,siswa.dara.novitasari,user123,Dara Novitasari,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106011,2026110611,Aktif
+usr-student-xif-12,siswa.ellysza.aulia,user123,Ellysza Aulia Ristiana,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106012,2026110612,Aktif
+usr-student-xif-13,siswa.fawaza.afganaura,user123,Fawaza Afganaura Tsany,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106013,2026110613,Aktif
+usr-student-xif-14,siswa.galuh.mutiara,user123,Galuh Mutiara Pratiwi,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106014,2026110614,Aktif
+usr-student-xif-15,siswa.intan.cahani,user123,Intan Cahani,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106015,2026110615,Aktif
+usr-student-xif-16,siswa.kanaya.cifa,user123,Kanaya Cifa Az Zahra,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106016,2026110616,Aktif
+usr-student-xif-17,siswa.keysa.regina,user123,Keysa Regina Putri Kuhuwael,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106017,2026110617,Aktif
+usr-student-xif-18,siswa.malana.kayla,user123,Malana Kayla Nur Aziza,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106018,2026110618,Aktif
+usr-student-xif-19,siswa.muhammad.aliffico,user123,Muhammad Aliffico Akbar HK,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106019,2026110619,Aktif
+usr-student-xif-20,siswa.muhammad.arfa,user123,Muhammad Arfa Athallah,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106020,2026110620,Aktif
+usr-student-xif-21,siswa.muhammad.kevin,user123,Muhammad Kevin Juliano Wassil,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106021,2026110621,Aktif
+usr-student-xif-22,siswa.najwa.zaenata,user123,Najwa Zaenata Kurniawan,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106022,2026110622,Aktif
+usr-student-xif-23,siswa.natasya.agustina,user123,Natasya Agustina Ramadhani,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106023,2026110623,Aktif
+usr-student-xif-24,siswa.noorisa.naira,user123,Noorisa Naira Falisha,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106024,2026110624,Aktif
+usr-student-xif-25,siswa.rakyan.maharaja,user123,Rakyan Maharaja Krishna,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106025,2026110625,Aktif
+usr-student-xif-26,siswa.renata.aprilia,user123,Renata Aprilia Aris Jannati,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106026,2026110626,Aktif
+usr-student-xif-27,siswa.rendy.caesar,user123,Rendy Caesar Ananto,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106027,2026110627,Aktif
+usr-student-xif-28,siswa.romy.tri,user123,Romy Tri Rahmatdon,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106028,2026110628,Aktif
+usr-student-xif-29,siswa.ryrin.cantika,user123,Ryrin Cantika Dewi,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106029,2026110629,Aktif
+usr-student-xif-30,siswa.saadan.emillul,user123,Saadan Emillul Fata,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106030,2026110630,Aktif
+usr-student-xif-31,siswa.sasikirana.abyta,user123,Sasikirana Abyta Hasan,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106031,2026110631,Aktif
+usr-student-xif-32,siswa.sreshi.zelda,user123,Sreshi Zelda Airani,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106032,2026110632,Aktif
+usr-student-xif-33,siswa.tanaya.lintang,user123,Tanaya Lintang Ilaika,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106033,2026110633,Aktif
+usr-student-xif-34,siswa.yoga.prasetyo,user123,Yoga Prasetyo,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106034,2026110634,Aktif
+usr-student-xif-35,siswa.zafina.nur,user123,Zafina Nur Ramadhani Siagian,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106035,2026110635,Aktif
+usr-student-xif-36,siswa.zahrotusyita.ghassani,user123,Zahrotusyita Ghassani,STUDENT,Siswa Kelas XI-F,,XI-F,,0081106036,2026110636,Aktif

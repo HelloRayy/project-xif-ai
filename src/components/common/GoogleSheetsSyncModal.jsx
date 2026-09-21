@@ -17,7 +17,10 @@ import {
   AlertCircle, 
   Database,
   Trash2,
-  Table
+  Table,
+  Copy,
+  Download,
+  UploadCloud
 } from 'lucide-react';
 import { 
   fetchSheetData, 
@@ -26,6 +29,7 @@ import {
   SHEETDB_API_URL 
 } from '@/lib/sheetdb';
 import { syncFromSheetDb } from '@/services/storage';
+import { allInitialUsers } from '@/data/initialData';
 
 const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1fvXarNDRFcYIEzx2uGF3wSzSF692vlTHH6QAHpq_eGs/edit?usp=sharing';
 
@@ -33,6 +37,7 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
 
   const loadSpreadsheetData = async () => {
@@ -90,9 +95,54 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
     }
   };
 
+  // Convert JSON to Tab-Separated Values (TSV) for 0-request bulk paste to Google Sheet
+  const handleCopyAllToClipboard = () => {
+    try {
+      const formattedRows = allInitialUsers.map(u => [
+        u.id || '',
+        u.username || '',
+        u.password || 'user123',
+        u.name || '',
+        u.role || 'STUDENT',
+        u.roleLabel || '',
+        u.assignedClass || '',
+        u.class || '',
+        u.nip || '',
+        u.nisn || '',
+        u.nis || '',
+        u.status || 'Aktif'
+      ]);
+
+      const tsvContent = formattedRows.map(cols => cols.join('\t')).join('\n');
+      navigator.clipboard.writeText(tsvContent);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 3000);
+      setStatusMessage({ 
+        type: 'success', 
+        text: `Berhasil menyalin ${formattedRows.length} data user! Buka spreadsheet, klik sel A2, lalu tekan Ctrl+V (Paste). 0 Request terpakai!` 
+      });
+    } catch (err) {
+      setStatusMessage({ type: 'error', text: 'Gagal menyalin data ke clipboard.' });
+    }
+  };
+
+  // Download direct CSV file for File > Import in Google Sheets
+  const handleDownloadCsv = () => {
+    const link = document.createElement('a');
+    link.href = '/data_sekolah_import_google_sheets.csv';
+    link.download = 'data_sekolah_import_google_sheets.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setStatusMessage({
+      type: 'success',
+      text: 'File CSV berhasil diunduh. Di Google Sheets, pilih File > Impor > Upload file ini!'
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl w-[95vw] max-h-[85vh] flex flex-col p-6 gap-5">
+      <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] flex flex-col p-6 gap-4">
         <DialogHeader className="gap-1.5 text-left">
           <div className="flex items-center justify-between gap-2 pr-6">
             <div className="flex items-center gap-2.5">
@@ -104,7 +154,7 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
                   Kontrol Cloud Database Google Sheets
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground">
-                  Kelola sinkronisasi real-time antara aplikasi dan Google Spreadsheet via SheetDB.
+                  Kelola sinkronisasi real-time dan migrasi instan data JSON ke Google Sheets.
                 </DialogDescription>
               </div>
             </div>
@@ -116,11 +166,49 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
           </div>
         </DialogHeader>
 
+        {/* 0-Request Instant Bulk Migration Panel */}
+        <div className="rounded-xl border border-blue-200 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 p-3.5 flex flex-col gap-2.5 text-xs">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-blue-900 dark:text-blue-300 font-semibold">
+              <UploadCloud className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>Migrasi 223 Data JSON ke Excel (Hemat 100% Kuota Request)</span>
+            </div>
+            <span className="text-[11px] font-medium text-blue-700 dark:text-blue-400">
+              {allInitialUsers.length} Akun (Admin, Guru, Siswa)
+            </span>
+          </div>
+          
+          <p className="text-muted-foreground text-[11px] leading-relaxed">
+            Pilih salah satu cara tercepat berikut agar kuota SheetDB tidak termakan:
+          </p>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <Button
+              size="sm"
+              onClick={handleCopyAllToClipboard}
+              className="h-8 text-xs gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              {copySuccess ? 'Tersalin ke Clipboard!' : '1. Salin 223 Baris (Ctrl+V ke Sheet)'}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadCsv}
+              className="h-8 text-xs gap-1.5 border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100/50"
+            >
+              <Download className="w-3.5 h-3.5" />
+              2. Unduh CSV Siap Impor
+            </Button>
+          </div>
+        </div>
+
         {/* Action & Info Card */}
         <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <Database className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Spreadsheet Database Aktif</span>
             </div>
             <p className="text-muted-foreground text-[11px] truncate max-w-md">
@@ -162,8 +250,8 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
         )}
 
         {/* Live Data Preview Table */}
-        <div className="flex-1 min-h-[220px] max-h-[360px] overflow-hidden rounded-xl border border-border flex flex-col bg-background">
-          <div className="p-3 bg-muted/50 border-b border-border flex items-center justify-between text-xs font-semibold text-muted-foreground">
+        <div className="flex-1 min-h-[180px] max-h-[300px] overflow-hidden rounded-xl border border-border flex flex-col bg-background">
+          <div className="p-2.5 bg-muted/50 border-b border-border flex items-center justify-between text-xs font-semibold text-muted-foreground">
             <div className="flex items-center gap-2 text-foreground">
               <Table className="w-4 h-4 text-muted-foreground" />
               <span>Daftar Baris di Google Sheet ({rows.length} baris)</span>
@@ -182,16 +270,16 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
 
           <div className="flex-1 overflow-auto">
             {loading ? (
-              <div className="flex flex-col items-center justify-center h-48 gap-2 text-muted-foreground text-xs">
+              <div className="flex flex-col items-center justify-center h-36 gap-2 text-muted-foreground text-xs">
                 <RefreshCw className="w-5 h-5 animate-spin text-emerald-600" />
                 <span>Mengambil data terbaru dari Google Sheets...</span>
               </div>
             ) : rows.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-48 text-center p-4 text-muted-foreground text-xs">
+              <div className="flex flex-col items-center justify-center h-36 text-center p-4 text-muted-foreground text-xs">
                 <FileSpreadsheet className="w-8 h-8 stroke-1 text-muted-foreground/60 mb-1" />
-                <p className="font-medium text-foreground">Spreadsheet Belum Memiliki Baris Data</p>
+                <p className="font-medium text-foreground">Spreadsheet Masih Kosong</p>
                 <p className="text-[11px] max-w-sm mt-0.5">
-                  Header kolom sudah terpasang. Saat ada registrasi baru atau permohonan izin, data otomatis tercatat di sini.
+                  Klik tombol <b>Salin 223 Baris</b> di atas, lalu paste ke Google Sheet Anda.
                 </p>
               </div>
             ) : (
@@ -243,7 +331,7 @@ export default function GoogleSheetsSyncModal({ open, onOpenChange, onDataRefres
           </div>
         </div>
 
-        <DialogFooter className="flex sm:justify-between items-center gap-2 border-t border-border pt-4">
+        <DialogFooter className="flex sm:justify-between items-center gap-2 border-t border-border pt-3">
           <span className="text-[11px] text-muted-foreground">
             Perubahan di spreadsheet otomatis disinkronkan saat sistem memuat data.
           </span>
