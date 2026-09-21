@@ -85,3 +85,25 @@ export const updateSheetRow = async (sheetName, column, value, updatedData) => {
     return null;
   }
 };
+
+// Helper delete DELETE row from specific sheet tab by column search (e.g. id)
+export const deleteSheetRow = async (sheetName, column, value) => {
+  if (!isSheetDbConfigured) return null;
+  try {
+    const url = `${SHEETDB_API_URL}/${encodeURIComponent(column)}/${encodeURIComponent(value)}${sheetName ? `?sheet=${encodeURIComponent(sheetName)}` : ''}`;
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn(`Error deleting Google Sheet row (${sheetName}):`, err);
+    return null;
+  }
+};
+
+export { SHEETDB_API_URL };

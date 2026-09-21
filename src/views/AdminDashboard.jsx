@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FileSpreadsheet, Lock, Unlock } from 'lucide-react';
+import { FileSpreadsheet, Lock, Unlock, Cloud } from 'lucide-react';
 import PrintAttendanceModal from '../components/PrintAttendanceModal';
+import GoogleSheetsSyncModal from '../components/common/GoogleSheetsSyncModal';
 import { Button } from '../components/ui/button';
 import { Switch } from '../components/ui/switch';
 import { cn } from '../lib/utils';
@@ -83,6 +84,7 @@ export default function AdminDashboard({ currentUser, activeTab }) {
   }, [students, studentClassFilter, studentSearchQuery]);
 
   const [showAdminPrintModal, setShowAdminPrintModal] = useState(false);
+  const [showSheetsModal, setShowSheetsModal] = useState(false);
 
   // Detail Modal State
   const [selectedReqForTU, setSelectedReqForTU] = useState(null);
@@ -323,6 +325,17 @@ export default function AdminDashboard({ currentUser, activeTab }) {
             />
           </div>
 
+          {/* Google Sheets Database Control Button */}
+          <Button
+            variant="outline"
+            onClick={() => setShowSheetsModal(true)}
+            className="h-10 px-3.5 text-xs font-medium rounded-xl border-emerald-500/30 bg-emerald-50/40 dark:bg-emerald-950/20 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 gap-2 shadow-2xs shrink-0"
+          >
+            <Cloud className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span className="hidden sm:inline">Google Sheets Sync</span>
+            <span className="sm:hidden">Sheets</span>
+          </Button>
+
           {/* Export Excel Button */}
           <Button
             variant="outline"
@@ -422,6 +435,13 @@ export default function AdminDashboard({ currentUser, activeTab }) {
         requests={requests}
         teacherName={currentUser?.name || "Guru BK SMAN 6"}
         teacherNip={currentUser?.nip || "12345"}
+      />
+
+      {/* 11. Google Sheets Sync Control Modal */}
+      <GoogleSheetsSyncModal
+        open={showSheetsModal}
+        onOpenChange={setShowSheetsModal}
+        onDataRefreshed={loadData}
       />
 
     </div>
