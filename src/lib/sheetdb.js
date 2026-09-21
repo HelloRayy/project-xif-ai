@@ -16,18 +16,13 @@ export const fetchSheetData = async (sheetName) => {
   try {
     let url = SHEETDB_API_URL;
     if (sheetName) {
-      // First try default spreadsheet endpoint directly if single sheet
-      let res = await fetch(`${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}`);
+      // Query specific sheet tab
+      const res = await fetch(`${SHEETDB_API_URL}?sheet=${encodeURIComponent(sheetName)}`);
       if (res.ok) {
         const data = await res.json();
         return Array.isArray(data) ? data : [];
       }
-      // If 404 (sheet tab doesn't exist), fallback to main spreadsheet
-      res = await fetch(SHEETDB_API_URL);
-      if (res.ok) {
-        const data = await res.json();
-        return Array.isArray(data) ? data : [];
-      }
+      // If tab does not exist (404), do NOT fallback to main sheet to avoid mismatched schemas
       return [];
     }
     const res = await fetch(url);

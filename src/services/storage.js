@@ -288,21 +288,33 @@ export const deleteStudent = (studentId) => {
 
 export const getRequests = () => {
   const data = localStorage.getItem(STORAGE_KEYS.REQUESTS);
-  if (!data) return [];
-  const reqs = JSON.parse(data);
-  return reqs.map(r => ({
-    ...r,
-    attachments: (r.attachments || []).map(att => {
-      const isImg = att.type?.startsWith('image/') || att.name?.match(/\.(jpg|jpeg|png)$/i);
-      if (isImg && !att.previewUrl) {
-        return {
-          ...att,
-          previewUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1000&auto=format&fit=crop&q=80'
-        };
-      }
-      return att;
-    })
-  }));
+  if (!data) return initialRequests;
+  try {
+    const reqs = JSON.parse(data);
+    if (!Array.isArray(reqs) || reqs.length === 0) return initialRequests;
+    return reqs
+      .filter(r => r && (r.id || r.studentName))
+      .map(r => ({
+        ...r,
+        studentName: r.studentName || 'Siswa SMAN 6',
+        studentClass: r.studentClass || 'XI-A',
+        subType: r.subType || 'Permohonan Izin',
+        status: r.status || 'MENUNGGU_VERIFIKASI',
+        attachments: (r.attachments || []).map(att => {
+          const isImg = att?.type?.startsWith('image/') || att?.name?.match(/\.(jpg|jpeg|png)$/i);
+          if (isImg && !att.previewUrl) {
+            return {
+              ...att,
+              previewUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=1000&auto=format&fit=crop&q=80'
+            };
+          }
+          return att;
+        })
+      }));
+  } catch (err) {
+    console.error('Error parsing requests:', err);
+    return initialRequests;
+  }
 };
 
 export const createRequest = (requestData) => {

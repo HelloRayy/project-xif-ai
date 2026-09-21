@@ -187,11 +187,11 @@ export default function RequestMonitoringTab({
                     <TableCell className="py-3.5 px-4 min-w-[180px]">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-semibold text-xs flex items-center justify-center shrink-0 border border-purple-200/60 dark:border-purple-900/60">
-                          {r.studentName.slice(0, 2).toUpperCase()}
+                          {(r.studentName || 'S').slice(0, 2).toUpperCase()}
                         </div>
                         <div className="min-w-0">
                           <span className="font-semibold text-xs text-slate-900 dark:text-zinc-100 truncate block">
-                            {r.studentName}
+                            {r.studentName || 'Siswa'}
                           </span>
                         </div>
                       </div>
