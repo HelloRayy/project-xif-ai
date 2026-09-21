@@ -21,7 +21,12 @@ import {
   initialDocuments,
   initialNotifications
 } from '../data/initialData';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { 
+  fetchSheetData, 
+  insertSheetRow, 
+  updateSheetRow, 
+  isSheetDbConfigured 
+} from '../lib/sheetdb';
 
 // Default Sample Data (used when Seed Data button is triggered or for reference)
 export const SEED_DATA = {
@@ -47,76 +52,80 @@ export const initStorage = () => {
     localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(initialNotifications));
   }
 
-  // If Supabase is configured, pull latest remote users and requests in background
-  if (isSupabaseConfigured && supabase) {
-    syncFromSupabase();
+  // If SheetDB is configured, pull latest remote users and requests in background
+  if (isSheetDbConfigured) {
+    syncFromSheetDb();
   }
 };
 
-export const syncFromSupabase = async () => {
-  if (!isSupabaseConfigured || !supabase) return;
+export const syncFromSheetDb = async () => {
+  if (!isSheetDbConfigured) return;
   try {
-    const { data: remoteUsers, error: uErr } = await supabase.from('users').select('*');
-    if (!uErr && remoteUsers && remoteUsers.length > 0) {
+    const remoteUsers = await fetchSheetData('users');
+    if (remoteUsers && Array.isArray(remoteUsers) && remoteUsers.length > 0) {
       const localUsers = getUsers();
       const userMap = new Map();
       localUsers.forEach(u => userMap.set(u.username?.toLowerCase(), u));
       remoteUsers.forEach(ru => {
-        userMap.set(ru.username?.toLowerCase(), {
-          id: ru.id,
-          username: ru.username,
-          password: ru.password,
-          name: ru.name,
-          role: ru.role,
-          roleLabel: ru.role_label,
-          assignedClass: ru.assigned_class,
-          class: ru.class,
-          nip: ru.nip,
-          nisn: ru.nisn,
-          nis: ru.nis,
-          status: ru.status
-        });
+        if (ru && ru.username) {
+          userMap.set(ru.username?.toLowerCase(), {
+            id: ru.id,
+            username: ru.username,
+            password: ru.password,
+            name: ru.name,
+            role: ru.role,
+            roleLabel: ru.roleLabel || ru.role_label,
+            assignedClass: ru.assignedClass || ru.assigned_class,
+            class: ru.class,
+            nip: ru.nip,
+            nisn: ru.nisn,
+            nis: ru.nis,
+            status: ru.status || 'Aktif'
+          });
+        }
       });
       localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(Array.from(userMap.values())));
     }
 
-    const { data: remoteReqs, error: rErr } = await supabase.from('requests').select('*');
-    if (!rErr && remoteReqs && remoteReqs.length > 0) {
+    const remoteReqs = await fetchSheetData('requests');
+    if (remoteReqs && Array.isArray(remoteReqs) && remoteReqs.length > 0) {
       const localReqs = getRequests();
       const reqMap = new Map();
       localReqs.forEach(r => reqMap.set(r.id, r));
       remoteReqs.forEach(rr => {
-        reqMap.set(rr.id, {
-          id: rr.id,
-          type: rr.type,
-          subType: rr.sub_type,
-          studentId: rr.student_id,
-          studentName: rr.student_name,
-          studentNis: rr.student_nis,
-          studentClass: rr.student_class,
-          teacherName: rr.teacher_name,
-          purpose: rr.purpose,
-          startDate: rr.start_date,
-          endDate: rr.end_date,
-          timeSpanFormatted: rr.time_span_formatted,
-          startPeriod: rr.start_period,
-          endPeriod: rr.end_period,
-          periodTime: rr.period_time,
-          isMultiDay: rr.is_multi_day,
-          status: rr.status,
-          teacherNote: rr.teacher_note,
-          tuNote: rr.tu_note,
-          notes: rr.notes,
-          attachments: rr.attachments || [],
-          timeline: rr.timeline || [],
-          createdAt: rr.created_at,
-          updatedAt: rr.updated_at
-        });
+        if (rr && rr.id) {
+          reqMap.set(rr.id, {
+            id: rr.id,
+            type: rr.type,
+            subType: rr.subType || rr.sub_type,
+            studentId: rr.studentId || rr.student_id,
+            studentName: rr.studentName || rr.student_name,
+            studentNis: rr.studentNis || rr.student_nis,
+            studentClass: rr.studentClass || rr.student_class,
+            teacherName: rr.teacherName || rr.teacher_name,
+            purpose: rr.purpose,
+            startDate: rr.startDate || rr.start_date,
+            endDate: rr.endDate || rr.end_date,
+            timeSpanFormatted: rr.timeSpanFormatted || rr.time_span_formatted,
+            startPeriod: rr.startPeriod || rr.start_period,
+            endPeriod: rr.endPeriod || rr.end_period,
+            periodTime: rr.periodTime || rr.period_time,
+            isMultiDay: rr.isMultiDay === 'true' || rr.isMultiDay === true,
+            status: rr.status,
+            teacherNote: rr.teacherNote || rr.teacher_note || '',
+            tuNote: rr.tuNote || rr.tu_note || '',
+            notes: rr.notes || '',
+            attachments: typeof rr.attachments === 'string' ? JSON.parse(rr.attachments || '[]') : (rr.attachments || []),
+            timeline: typeof rr.timeline === 'string' ? JSON.parse(rr.timeline || '[]') : (rr.timeline || []),
+            createdAt: rr.createdAt || rr.created_at,
+            updatedAt: rr.updatedAt || rr.updated_at
+          });
+        }
       });
       localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(Array.from(reqMap.values())));
     }
   } catch (err) {
-    console.warn('Cloud sync background error:', err);
+    console.warn('SheetDB background sync error:', err);
   }
 };
 
@@ -212,23 +221,21 @@ export const saveUser = (newUser) => {
     });
   }
 
-  // Push to Supabase if connected
-  if (isSupabaseConfigured && supabase) {
-    supabase.from('users').upsert({
+  // Push to SheetDB (Google Sheet) if connected
+  if (isSheetDbConfigured) {
+    insertSheetRow('users', {
       id: newUser.id,
       username: newUser.username,
       password: newUser.password,
       name: newUser.name,
       role: newUser.role,
-      role_label: newUser.roleLabel,
-      assigned_class: newUser.assignedClass,
-      class: newUser.class,
-      nip: newUser.nip,
-      nisn: newUser.nisn,
-      nis: newUser.nis,
+      roleLabel: newUser.roleLabel || '',
+      assignedClass: newUser.assignedClass || '',
+      class: newUser.class || '',
+      nip: newUser.nip || '',
+      nisn: newUser.nisn || '',
+      nis: newUser.nis || '',
       status: newUser.status || 'Aktif'
-    }).then(({ error }) => {
-      if (error) console.warn('Supabase saveUser error:', error);
     });
   }
 
@@ -326,35 +333,33 @@ export const createRequest = (requestData) => {
   requests.unshift(newReq);
   localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(requests));
 
-  // Push to Supabase
-  if (isSupabaseConfigured && supabase) {
-    supabase.from('requests').upsert({
+  // Push to SheetDB (Google Sheet)
+  if (isSheetDbConfigured) {
+    insertSheetRow('requests', {
       id: newReq.id,
       type: newReq.type,
-      sub_type: newReq.subType,
-      student_id: newReq.studentId,
-      student_name: newReq.studentName,
-      student_nis: newReq.studentNis,
-      student_class: newReq.studentClass,
-      teacher_name: newReq.teacherName,
+      subType: newReq.subType,
+      studentId: newReq.studentId,
+      studentName: newReq.studentName,
+      studentNis: newReq.studentNis || '',
+      studentClass: newReq.studentClass,
+      teacherName: newReq.teacherName || '',
       purpose: newReq.purpose,
-      start_date: newReq.startDate,
-      end_date: newReq.endDate,
-      time_span_formatted: newReq.timeSpanFormatted,
-      start_period: newReq.startPeriod,
-      end_period: newReq.endPeriod,
-      period_time: newReq.periodTime,
-      is_multi_day: newReq.isMultiDay,
+      startDate: newReq.startDate,
+      endDate: newReq.endDate,
+      timeSpanFormatted: newReq.timeSpanFormatted || '',
+      startPeriod: newReq.startPeriod || '',
+      endPeriod: newReq.endPeriod || '',
+      periodTime: newReq.periodTime || '',
+      isMultiDay: String(Boolean(newReq.isMultiDay)),
       status: newReq.status,
-      teacher_note: newReq.teacherNote,
-      tu_note: newReq.tuNote,
-      notes: newReq.notes,
-      attachments: newReq.attachments || [],
-      timeline: newReq.timeline || [],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }).then(({ error }) => {
-      if (error) console.warn('Supabase createRequest error:', error);
+      teacherNote: newReq.teacherNote || '',
+      tuNote: newReq.tuNote || '',
+      notes: newReq.notes || '',
+      attachments: JSON.stringify(newReq.attachments || []),
+      timeline: JSON.stringify(newReq.timeline || []),
+      createdAt: newReq.createdAt,
+      updatedAt: newReq.updatedAt
     });
   }
 
@@ -410,16 +415,14 @@ export const updateRequestStatus = (requestId, newStatus, note = '', currentUser
   requests[index] = req;
   localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(requests));
 
-  // Push updated status to Supabase
-  if (isSupabaseConfigured && supabase) {
-    supabase.from('requests').update({
+  // Push updated status to SheetDB (Google Sheet)
+  if (isSheetDbConfigured) {
+    updateSheetRow('requests', 'id', req.id, {
       status: req.status,
-      teacher_note: req.teacherNote,
-      admin_note: req.adminNote,
-      updated_at: new Date().toISOString(),
-      timeline: req.timeline
-    }).eq('id', req.id).then(({ error }) => {
-      if (error) console.warn('Supabase updateRequestStatus error:', error);
+      teacherNote: req.teacherNote || '',
+      adminNote: req.adminNote || '',
+      updatedAt: now,
+      timeline: JSON.stringify(req.timeline)
     });
   }
 
