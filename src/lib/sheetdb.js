@@ -3,7 +3,7 @@
  * Menghubungkan aplikasi langsung ke Google Spreadsheet via SheetDB API
  */
 
-const SHEETDB_API_URL = import.meta.env.VITE_SHEETDB_API_URL || '';
+const SHEETDB_API_URL = import.meta.env.VITE_SHEETDB_API_URL || 'https://sheetdb.io/api/v1/8ljb6uwznrs41';
 
 export const isSheetDbConfigured = Boolean(
   SHEETDB_API_URL && 

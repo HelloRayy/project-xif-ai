@@ -11,7 +11,7 @@ import ClassAttendanceTab from '../components/teacher/ClassAttendanceTab';
 import VerificationActionModal from '../components/teacher/VerificationActionModal';
 import StudentDetailDrawer from '../components/teacher/StudentDetailDrawer';
 import { isDateMatchingFilter } from '../lib/dateUtils';
-import { getRequests, updateRequestStatus, getStudents } from '../services/storage';
+import { getRequests, updateRequestStatus, getStudents, syncFromSheetDb } from '../services/storage';
 import * as XLSX from 'xlsx';
 
 export default function TeacherDashboard({ currentUser, activeTab }) {
@@ -57,6 +57,15 @@ export default function TeacherDashboard({ currentUser, activeTab }) {
 
   useEffect(() => {
     loadData();
+    // Immediate background sync on tab/mount
+    syncFromSheetDb().then(() => loadData());
+
+    // Auto-poll every 6 seconds to fetch new requests from Google Sheets (e.g. from student devices)
+    const pollInterval = setInterval(() => {
+      syncFromSheetDb().then(() => loadData());
+    }, 6000);
+
+    return () => clearInterval(pollInterval);
   }, [currentUser, activeTab, selectedClass]);
 
   const loadData = () => {

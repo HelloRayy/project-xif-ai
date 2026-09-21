@@ -13,7 +13,8 @@ import {
   getDocuments, 
   getPortalLockMode, 
   setPortalLockMode, 
-  isPortalLockedNow 
+  isPortalLockedNow,
+  syncFromSheetDb
 } from '../services/storage';
 import * as XLSX from 'xlsx';
 
@@ -131,6 +132,15 @@ export default function AdminDashboard({ currentUser, activeTab }) {
 
   useEffect(() => {
     loadData();
+    // Immediate background sync on tab/mount
+    syncFromSheetDb().then(() => loadData());
+
+    // Auto-poll every 6 seconds to fetch new requests from Google Sheets
+    const pollInterval = setInterval(() => {
+      syncFromSheetDb().then(() => loadData());
+    }, 6000);
+
+    return () => clearInterval(pollInterval);
   }, [currentUser, activeTab]);
 
   const loadData = () => {

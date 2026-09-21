@@ -101,36 +101,42 @@ export function RegisterForm({
       .replace(/^\.|\.$/g, "")
 
     const users = getUsers()
-    const isExisting = users.some(
+    const existingUser = users.find(
       u => u.name?.toLowerCase().trim() === cleanName.toLowerCase() && u.role === selectedRole
     )
 
-    if (isExisting) {
-      setErrorMsg(`Nama "${cleanName}" untuk peran ini sudah terdaftar. Silakan langsung login atau gunakan nama lain.`)
-      return
+    let userToSave = null;
+    if (existingUser) {
+      // If user already exists, update their password to the newly registered one
+      userToSave = {
+        ...existingUser,
+        password: password,
+        class: selectedRole === 'STUDENT' ? selectedClass : (existingUser.class || selectedClass),
+        assignedClass: selectedRole === 'TEACHER' ? selectedClass : existingUser.assignedClass
+      };
+    } else {
+      userToSave = {
+        id: `usr-${selectedRole.toLowerCase()}-${Date.now()}`,
+        username: generatedUsername || `user.${Date.now()}`,
+        password: password,
+        name: cleanName,
+        role: selectedRole,
+        roleLabel: selectedRole === 'ADMIN' 
+          ? 'Guru BK / Koordinator Konseling & TU' 
+          : selectedRole === 'TEACHER' 
+            ? `Wali Kelas ${selectedClass}` 
+            : `Siswa Kelas ${selectedClass}`,
+        assignedClass: selectedRole === 'TEACHER' ? selectedClass : undefined,
+        class: selectedRole === 'STUDENT' ? selectedClass : undefined,
+        nip: selectedRole !== 'STUDENT' ? '12345' : undefined,
+        nisn: selectedRole === 'STUDENT' ? `008${Math.floor(1000000 + Math.random() * 9000000)}` : undefined,
+        nis: selectedRole === 'STUDENT' ? `2026${Math.floor(100000 + Math.random() * 900000)}` : undefined,
+        status: 'Aktif'
+      };
     }
 
-    const newUser = {
-      id: `usr-${selectedRole.toLowerCase()}-${Date.now()}`,
-      username: generatedUsername || `user.${Date.now()}`,
-      password: password,
-      name: cleanName,
-      role: selectedRole,
-      roleLabel: selectedRole === 'ADMIN' 
-        ? 'Guru BK / Koordinator Konseling & TU' 
-        : selectedRole === 'TEACHER' 
-          ? `Wali Kelas ${selectedClass}` 
-          : `Siswa Kelas ${selectedClass}`,
-      assignedClass: selectedRole === 'TEACHER' ? selectedClass : undefined,
-      class: selectedRole === 'STUDENT' ? selectedClass : undefined,
-      nip: selectedRole !== 'STUDENT' ? '12345' : undefined,
-      nisn: selectedRole === 'STUDENT' ? `008${Math.floor(1000000 + Math.random() * 9000000)}` : undefined,
-      nis: selectedRole === 'STUDENT' ? `2026${Math.floor(100000 + Math.random() * 900000)}` : undefined,
-      status: 'Aktif'
-    }
-
-    saveUser(newUser)
-    setRegisteredUser(newUser)
+    saveUser(userToSave)
+    setRegisteredUser(userToSave)
     setIsSuccess(true)
     
     if (onRegisterSuccess) {

@@ -7,7 +7,7 @@ import StudentRequestDetailDrawer from '../components/student/StudentRequestDeta
 import SubmissionSuccessModal from '../components/student/SubmissionSuccessModal';
 import ImageLightboxModal from '../components/common/ImageLightboxModal';
 import ConfirmAlertModal from '../components/common/ConfirmAlertModal';
-import { getRequests, createRequest, cancelRequest, getDocuments } from '../services/storage';
+import { getRequests, createRequest, cancelRequest, getDocuments, syncFromSheetDb } from '../services/storage';
 import { defaultTeachers } from '../data/initialData';
 import { PERMIT_SERVICES, JP_SCHEDULE, isPeriodPassed } from '../components/student/studentConstants';
 import { formatDateToIso } from '../lib/dateUtils';
@@ -69,11 +69,20 @@ export default function StudentDashboard({ currentUser, activeTab, setActiveTab,
 
   useEffect(() => {
     loadData();
+    // Immediate background sync on tab/mount
+    syncFromSheetDb().then(() => loadData());
+
+    // Auto-poll every 6 seconds to update permission status from teacher approvals
+    const pollInterval = setInterval(() => {
+      syncFromSheetDb().then(() => loadData());
+    }, 6000);
+
+    return () => clearInterval(pollInterval);
   }, [currentUser, activeTab]);
 
   const loadData = () => {
     if (!currentUser) return;
-    const allReqs = getRequests().filter(r => r.studentId === currentUser.id);
+    const allReqs = getRequests().filter(r => r.studentId === currentUser.id || r.studentName === currentUser.name);
     setRequests(allReqs);
 
     const allDocs = getDocuments().filter(d => d.studentId === currentUser.id);
